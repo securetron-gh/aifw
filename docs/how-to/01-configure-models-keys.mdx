@@ -1,0 +1,93 @@
+---
+title: "Configure models & API keys"
+description: "A recipe for the Model Inventory, add models, set per-model keys, enable them, and understand key precedence."
+order: 1
+---
+
+This recipe walks through configuring the model registry so traffic routes where
+you want it, with the right keys.
+
+## 1. Open the Model Inventory
+
+The **Model Inventory** page is the single place where models are managed. On
+first run, a curated starter set is seeded (GPT family, o-series, DeepSeek, and
+friends), each with its provider and backend URL.
+
+<Callout type="warning" title="Everything starts disabled">
+Starter models ship **disabled**. Requests for a disabled model are rejected with
+`400 model_disabled` until you explicitly enable it. This fail-closed default means
+nothing routes until you say so.
+</Callout>
+
+## 2. Enable the models you use
+
+Use the Enable/Disable control (or the status API) to flip each model to
+`registered`. Only then will requests route to it.
+
+## 3. Add a custom model
+
+If your model isn't in the starter set, a private fine-tune, a self-hosted vLLM
+or Ollama endpoint, use **Add Custom Model**:
+
+| Field | Purpose |
+|---|---|
+| Model ID | The identifier clients send in the `model` field |
+| Provider | A label for your own reference |
+| Backend URL | Where the model actually lives |
+| API key | Optional, the provider key, stored server-side |
+| Protocol | `openai` or `anthropic` (`claude-*` IDs default to Anthropic) |
+
+## 4. Set the default model & backend
+
+In **Settings**:
+
+- **Default model**, filled in when a client omits the `model` field.
+- **Default backend**, the fallback destination for models without their own
+  backend URL (presets: DeepSeek, OpenAI, Mistral, Groq, Together, OpenRouter,
+  Ollama, LM Studio, vLLM, or a custom URL).
+- **Reject Unregistered Models**, strict mode: block requests for models that
+  aren't in the registry.
+
+## 5. Understand key precedence
+
+Which key reaches the backend is resolved **rule → model → global** (most specific
+wins):
+
+1. **Rule-level**, a key mode pinned on a matching rule.
+2. **Model-level**, the key mode in the Model Inventory.
+3. **Global**, Settings → Access Control → Key Mode (default `model`).
+
+With key mode `model` (default), the model's registered key is attached upstream
+**even for anonymous callers**, traffic can consume the corporate key. If you
+want callers to bring their own keys, set key mode `client` at the appropriate
+scope (and see the
+[identity guide](/docs/guides/identity-access#upstream-key-precedence) for the
+trade-offs).
+
+## 6. Watch for shadow AI
+
+Models that appear in traffic but aren't in the registry show up as **Newly
+Discovered LLMs**. Register the legitimate ones, and with strict mode on, reject
+everything else.
+
+## Per-model advanced parameters
+
+Each model can carry a **parameter policy** applied to the request body on its
+way to the backend. Configured in **Model Inventory -> Edit -> Customize
+Advanced Parameters**:
+
+- **Inject when absent** (default): the value is added only if the client
+  omitted the parameter.
+- **Force**: the value replaces whatever the client sent.
+
+The policy applies after protocol adaptation, so it works for OpenAI chat, the
+Responses API (parameters like `reasoning_effort`, `top_p`, `stop`, `tools`,
+`seed`, `response_format` are preserved through adaptation), and Anthropic
+backends (where `top_p`, `stop`, and best-effort `reasoning_effort` are
+translated). Common parameters are offered as suggestions; any JSON key can be
+supplied through the admin API.
+
+<Callout type="info" title="Related">
+- [Model routing & registry](/docs/guides/model-routing), the full routing decision tree
+- [Reliability & caching](/docs/guides/reliability-caching), per-model resilience settings
+</Callout>

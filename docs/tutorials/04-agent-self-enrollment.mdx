@@ -1,0 +1,135 @@
+---
+title: "Agent self-enrollment (CSR + mTLS)"
+description: "Walk an AI agent through the full enrollment round-trip, discover, register, request a certificate with a CSR, and authenticate with mTLS."
+order: 4
+---
+
+Agent Trust lets AI agents onboard themselves and obtain **PKI certificates** over
+the Agent2Agent (A2A) task-based protocol. This tutorial walks through the full
+round-trip: discovery → registration → certificate request (CSR) → certificate
+extraction → mTLS authentication.
+
+## 1. Discover, learn the API
+
+Every AI-FW deployment publishes an **agent card** describing its
+capabilities and authentication schemes:
+
+```bash
+curl http://<gateway-host>/.well-known/agent-card.json
+```
+
+The card advertises the A2A endpoints, the authentication schemes it accepts
+(bearer and/or mTLS), and the skills the agent can use. Read it before building
+your client, it is the single source of truth for the deployment.
+
+## 2. Register, introduce yourself
+
+Register with a unique `agentId` and the identity proof (your public key):
+
+```json
+POST /a2a/v1/register
+{
+  "agentId": "my-agent@corp.example",
+  "displayName": "My Agent",
+  "publicKeyPem": "-----BEGIN PUBLIC KEY----- …",
+  "usage": "Document Q&A assistant for legal",
+  "dataClassification": "Internal",
+  "tags": ["legal", "qa"]
+}
+```
+
+Key facts:
+
+- **Your identity is bound to the caller**, the first registrant's authenticated
+  identity (or source IP) owns that `agentId`. Another caller cannot take it over.
+- Give every agent a **unique `agentId`**. Agents sharing an IP with no `agentId`
+  collapse into a single identity; the same `agentId` from two hosts is rejected.
+- Identity proof (public key or certificate thumbprint) is set by the client at
+  registration and **cannot be edited by admins**, rotate it by re-registering
+  from the same sender.
+
+## 3. Request the certificate, send your CSR
+
+Generate a key pair and a CSR locally, **the private key never leaves the agent**:
+
+```bash
+openssl req -new -newkey rsa:2048 -nodes \
+  -keyout agent.key -out agent.csr \
+  -subj "/CN=my-agent@corp.example"
+```
+
+Then send the CSR to the certificate service as an A2A task:
+
+```json
+POST /a2a/v1/tasks/send
+{
+  "contextId": "enrollment-001",
+  "message": {
+    "role": "user",
+    "parts": [{
+      "kind": "file",
+      "mimeType": "application/x-pem-file",
+      "name": "agent.csr",
+      "bytes": "<base64 of agent.csr>"
+    }]
+  }
+}
+```
+
+## 4. Poll the task
+
+The certificate service processes the request asynchronously. Poll the task state
+until it completes:
+
+```json
+GET /a2a/v1/tasks/{taskId}
+```
+
+Expect `completed` with the issued certificate chain as the result artifact.
+
+## 5. Extract the certificate
+
+Retrieve the artifact and write the chain to disk:
+
+```bash
+# certificate chain: leaf + intermediate certs (no root, correct)
+# the leaf's SANs must cover the gateway host you'll connect to
+curl -o cert.pem http://<gateway-host>/a2a/v1/tasks/{taskId}/artifacts/{artifactId}
+```
+
+<Callout type="success" title="You already have everything else">
+`agent.key` was generated in step 3 and stayed on the agent; `agent.csr` was the
+request input. The issued `cert.pem` is the only new piece.
+</Callout>
+
+## 6. Authenticate with mTLS
+
+Use the certificate for mutual TLS against the gateway:
+
+```bash
+curl --cert cert.pem --key agent.key \
+  https://<gateway-host>/a2a/v1/agent/card \
+  --cacert ca-bundle.pem
+```
+
+The gateway validates your certificate against its **CA trust store** (the same
+store used for server certificates and other agents), maps the certificate
+identity to your agent record, and authenticates you. Because runtime validation
+is against the trust store, certificate rotation keeps working without a registry
+change.
+
+## The round-trip at a glance
+
+```
+discover (.well-known/agent-card.json)
+   → register (POST /a2a/v1/register, bind identity)
+   → send CSR (POST /a2a/v1/tasks/send)
+   → poll task (GET /a2a/v1/tasks/{taskId})
+   → extract chain (cert artifact)
+   → use it (mTLS for every call)
+```
+
+<Callout type="info" title="Related">
+- [API reference, A2A agent protocol](/docs/api-reference/a2a-agent-protocol)
+- [Identity & access](/docs/guides/identity-access), mTLS, Kerberos, and API keys
+</Callout>

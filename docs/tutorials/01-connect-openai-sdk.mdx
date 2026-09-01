@@ -1,0 +1,108 @@
+---
+title: "Connect an OpenAI SDK"
+description: "Point an OpenAI-compatible client at the gateway, endpoint mode for full inspection, proxy mode for convenience."
+order: 1
+---
+
+There are two ways for OpenAI-compatible clients to reach the gateway:
+
+1. **Endpoint mode** (recommended), point the client at the gateway's `/v1`
+   base URL. Full content inspection on every request.
+2. **Proxy mode**, configure the gateway as an HTTP forward proxy.
+
+## Endpoint mode
+
+Any OpenAI-compatible SDK works. The only change is the base URL.
+
+### Python
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="<provider-api-key>",        # passed through to the backend
+    base_url="http://<gateway-host>:443/v1",  # the AI-FW gateway
+    default_headers={"X-Agent-ID": "my-agent-01"},
+)
+
+resp = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Hello!"}],
+)
+print(resp.choices[0].message.content)
+```
+
+### Node.js
+
+```js
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "<provider-api-key>",
+  baseURL: "http://<gateway-host>:443/v1",
+  defaultHeaders: { "X-Agent-ID": "my-agent-01" },
+});
+
+const resp = await client.chat.completions.create({
+  model: "gpt-4o",
+  messages: [{ role: "user", content: "Hello!" }],
+});
+console.log(resp.choices[0].message.content);
+```
+
+### Plain curl
+
+```bash
+curl http://<gateway-host>:443/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "X-Agent-ID: my-agent-01" \
+  -d '{
+    "model": "gpt-4o",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'
+```
+
+## Request headers
+
+| Header | Purpose |
+|---|---|
+| `Authorization: Bearer <key>` | Client authentication and/or upstream key (see auth modes) |
+| `X-Agent-ID` | Agent identity for tracking, routing rules, and risk |
+| `X-User-Id` | User identity for tracking (token `sub` claims are preferred) |
+| `x-aifw-cache-refresh` | Bypass the cache lookup for this request (still allows the write) |
+
+## Proxy mode
+
+Configure the gateway as an HTTP forward proxy for clients that support one:
+
+```bash
+curl --proxy http://<gateway-host>:443 https://api.openai.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model":"gpt-4o","messages":[{"role":"user","content":"hi"}]}'
+```
+
+| Proxy mode | Behavior | Inspection |
+|---|---|---|
+| Absolute-form HTTP | Normalized to `/v1/*`, full pipeline runs | ✅ Full |
+| CONNECT tunnel (HTTPS) | Raw TCP tunnel to an allow-listed backend | ⚠️ Metadata only, TLS is end-to-end encrypted |
+
+**CONNECT allow-list**, tunnels only open to the default backend host, registered
+model backends, and extra hosts you add in **Settings → Forward Proxy → Allowed
+Tunnel Hosts**. Anything else gets `403`. The whole forward proxy can be disabled.
+
+<Callout type="warning" title="HTTPS traffic through a tunnel is not inspected">
+Content inspection requires seeing the traffic. For HTTPS, use endpoint mode, the
+CONNECT tunnel is end-to-end encrypted and only metadata is logged.
+</Callout>
+
+## Streaming
+
+`stream: true` works exactly as with any OpenAI backend. The gateway's streaming
+mode (buffered or live) is applied per request, see the
+[identity & access guide](/docs/guides/identity-access#streaming-modes) for the
+trade-off between strictness and latency.
+
+<Callout type="info" title="Related">
+- [API reference, OpenAI-compatible endpoints](/docs/api-reference/openai-compatible-api)
+- [Quick start](/docs/getting-started/quick-start)
+</Callout>

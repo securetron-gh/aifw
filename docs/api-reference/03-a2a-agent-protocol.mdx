@@ -1,0 +1,102 @@
+---
+title: "A2A agent protocol"
+description: "The Agent2Agent (A2A) surface, the agent card, registration, task-based certificate operations, MCP, and webhooks."
+order: 3
+---
+
+Agent Trust implements the **Agent2Agent (A2A) v1.0.0** protocol, letting AI
+agents onboard with an identity and perform PKI operations, certificate issuance,
+renewal, and revocation, through a task-based interaction model.
+
+## Agent card
+
+Every deployment publishes a machine-readable agent card:
+
+```
+GET /.well-known/agent-card.json
+```
+
+It advertises the A2A endpoints, the authentication schemes accepted (`bearerAuth`
+and/or `mtlsAuth`), and the skills an agent can use. Clients should read the card
+at startup, it is the single source of truth for the deployment.
+
+## Authentication
+
+| Scheme | How |
+|---|---|
+| **Bearer / JWT** | `Authorization: Bearer <jwt>` against your configured signing secret; the `sub` claim becomes the agent identity |
+| **mTLS** | Client certificate on the mTLS listener; certificate identity (SPIFFE URI → subject key identifier → common name) maps to the agent identity |
+| **Kerberos** | Domain-joined service accounts via `Authorization: Negotiate` |
+
+Auth mode is configurable: `off` (anonymous, IP-based identity, backward
+compatible), `jwt`, or `oidc` (browser session or mTLS cert).
+
+## Register an agent
+
+```
+POST /a2a/v1/register
+```
+
+| Field | Notes |
+|---|---|
+| `agentId` | Unique agent identity; bound to the caller on first registration |
+| `displayName` / `agentCardJson` | Human-readable identity and capabilities |
+| `publicKeyPem` / `certThumbprint` | Identity proof, required when the registry policy requires it; set by the client, not editable by admins |
+| `tags[]` | Free-form labels used by routing rules and agent groups |
+| `webhookUrl` | Optional HTTPS outbound webhook for notifications (requires an authenticated caller) |
+
+The registry binds `agentId` to the registering caller's identity; a different
+caller cannot take it over. Register every agent with a unique `agentId`, agents
+sharing an IP without one collapse into a single identity.
+
+## Tasks
+
+Certificate operations are **tasks**, asynchronous, pollable units of work:
+
+| Method & path | Purpose |
+|---|---|
+| `POST /a2a/v1/tasks/send` | Create a task with a user message (e.g. a CSR file part) |
+| `GET /a2a/v1/tasks/{taskId}` | Poll task state and result artifacts |
+| `POST /a2a/v1/tasks/{taskId}/cancel` | Cancel a running task |
+| `POST /a2a/v1/tasks/{taskId}/subscribe` | SSE stream of task updates |
+
+Send a CSR as a file part, poll until `completed`, then retrieve the issued
+certificate chain artifact. See the
+[self-enrollment tutorial](/docs/tutorials/agent-self-enrollment) for the full
+round-trip with real request/response shapes.
+
+## Streams & idempotency
+
+- SSE streaming for `message:stream` and `subscribe` endpoints.
+- **Idempotency** via an `X-Idempotency-Key` header, retries with the same key
+  don't create duplicate tasks.
+
+## Webhooks
+
+Agents can register an outbound **webhook** (HTTPS, public host, authenticated
+caller) to receive notifications instead of polling. Webhook deliveries are
+verifiable and failures are surfaced in the agent's record and the audit log.
+
+## MCP compliance tools
+
+MCP-enabled agents can also call the gateway's compliance tools directly over
+MCP, including checking a prompt *before* sending it to a model and acting on the
+verdict (`allow` / `deny` / `flag` / `mask`). See the
+[Claude Code, Cursor & MCP tutorial](/docs/tutorials/claude-code-cursor-mcp).
+
+## Task states
+
+| State | Meaning |
+|---|---|
+| `submitted` | Task created, waiting |
+| `working` | Task being processed |
+| `input-required` | Task needs more input from the agent |
+| `completed` | Done, result artifacts available |
+| `canceled` | Canceled by the agent or admin |
+| `failed` / `rejected` | Failed, or rejected (e.g. while the identity is blocked) |
+| `auth-required` | The agent must authenticate before the task proceeds |
+
+<Callout type="info" title="Related">
+- [Agent self-enrollment (CSR + mTLS)](/docs/tutorials/agent-self-enrollment), end-to-end walkthrough
+- [Identity & access](/docs/guides/identity-access), auth modes and roles
+</Callout>

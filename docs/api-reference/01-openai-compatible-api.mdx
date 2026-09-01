@@ -1,0 +1,119 @@
+---
+title: "OpenAI-compatible API"
+description: "The /v1 endpoints, chat completions, request headers, error codes, streaming, and cache headers."
+order: 1
+---
+
+The gateway exposes OpenAI-compatible endpoints at its `/v1` base URL. Any client
+that speaks the OpenAI API can point at the gateway instead of the provider.
+
+## Endpoints
+
+| Method & path | Purpose |
+|---|---|
+| `POST /v1/chat/completions` | OpenAI-style chat completions (native, and via facade to Anthropic backends) |
+| `POST /v1/responses` | Responses API relay for newer SDKs; adapted to chat, run through the same pipeline |
+| `POST /v1/embeddings` | OpenAI-style embeddings (routed to a configured embeddings provider) |
+| `GET /v1/models` | List registered models |
+
+## Endpoint Gateway (images, audio, files, fine-tuning, batches)
+
+Beyond chat, messages, and embeddings, the gateway can expose the remaining
+OpenAI-compatible surfaces. These are **opt-in and disabled by default**;
+disabled endpoints return `404` with code `endpoint_disabled`. Enable each kind
+in **Settings -> Endpoint Gateway**:
+
+| Surface | Gate | Behavior |
+|---|---|---|
+| `/v1/images/generations`, `edits`, `variations` | images | JSON prompt scanned, masked, and compressed like a chat prompt; response metadata scanned; inspection-gated cache for generations |
+| `/v1/audio/speech` | audio | Input scanned like a chat prompt, then relayed |
+| `/v1/audio/transcriptions`, `translations` | passthrough | Multipart governed pass-through with key injection and audit |
+| `/v1/files` | files | Text files decoded and scanned; violations block the upload, binary files pass through |
+| `/v1/fine_tuning/jobs`, `/v1/batches` (+ cancel) | passthrough | Governed pass-through with key injection and audit |
+
+The media content itself (pixels, audio waveforms) is never analyzed, only the
+surrounding text. Every request records the endpoint kind in the transaction
+log.
+
+## Request headers
+
+| Header | Purpose |
+|---|---|
+| `Authorization: Bearer <key>` | Client authentication and/or upstream key per the configured auth and key modes |
+| `X-Agent-ID` | Agent identity, tracking, routing rules, risk, cache scoping |
+| `X-User-Id` | User identity for tracking (authenticated token `sub` claims are preferred) |
+| `x-aifw-cache-refresh` | Bypass the cache lookup for this request (the write is still allowed) |
+
+## Standard request
+
+```json
+POST /v1/chat/completions
+{
+  "model": "gpt-4o",
+  "messages": [
+    { "role": "system", "content": "You are a helpful assistant." },
+    { "role": "user", "content": "Hello!" }
+  ],
+  "stream": false
+}
+```
+
+| Field | Notes |
+|---|---|
+| `model` | Optional, omitted values are filled from the configured default model |
+| `messages` | Standard chat messages; `tool_calls`/`tool` sequences pass through byte-identical |
+| `stream` | `true` applies the effective streaming mode (buffered or live) |
+
+## Error codes
+
+Blocked or rejected requests return `HTTP 400` with a structured error:
+
+```json
+{
+  "error": {
+    "message": "The transaction was intercepted and blocked by corporate AI security policy.",
+    "type": "guardrail_violation",
+    "code": "prompt_injection_detected",
+    "details": { "policy_id": "BUILTIN-JAILBREAK", "timestamp": "2025-01-15T10:00:00Z" }
+  }
+}
+```
+
+Common codes:
+
+| Code | Meaning |
+|---|---|
+| `guardrail_violation` | Blocked by a rule (built-in or custom); details carry the policy ID |
+| `prompt_injection_detected` | Jailbreak/prompt-injection rule matched |
+| `semantic_rule_violation:<rule>` | Semantic tier scored above the block threshold |
+| `model_disabled` | The model is registered but not enabled |
+| `model_not_registered` | Strict mode is on and the model isn't in the registry |
+| `backend_not_configured` | No backend URL anywhere for the resolved model |
+| `default_policy_block` | Deny-by-default fired (nothing matched, default action is block) |
+
+Blocked responses also carry the `X-Gateway-Security: Violated` header. Auth
+failures return `401`; unknown routes `404`.
+
+## Streaming
+
+With `stream: true`, responses use server-sent events exactly like the OpenAI
+format, ending with `data: [DONE]`. The gateway applies the effective streaming
+mode (see [identity & access](/docs/guides/identity-access#streaming-modes)):
+
+- **buffered** (default): the full response is scanned before any token is
+  delivered; a violation returns `400` before delivery.
+- **stream**: tokens flow live; a mid-stream violation terminates the SSE stream
+  with a `guardrail_violation` error event. Tokens already delivered cannot be
+  retracted.
+
+## Caching
+
+When a cache scope is configured (see the
+[reliability guide](/docs/guides/reliability-caching)), responses may be served
+from the completion cache. Cache hits are recorded in the transaction log, and
+cached bodies still pass through response inspection on replay.
+
+<Callout type="info" title="Related">
+- [Connect an OpenAI SDK](/docs/tutorials/connect-openai-sdk), client examples
+- [Anthropic Messages API](/docs/api-reference/anthropic-messages-api), the other native protocol
+</Callout>

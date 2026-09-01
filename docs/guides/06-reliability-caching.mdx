@@ -1,0 +1,90 @@
+---
+title: "Reliability & caching"
+description: "Per-model resilience (retries, failover, distribution) and the opt-in completion cache, exact and semantic, with strict tenant isolation."
+order: 6
+---
+
+The gateway is the single point of failure for every AI call you make, so
+reliability and latency matter. AI-FW gives each model its own resilience
+policy, and an opt-in completion cache keeps repeated prompts fast and cheap.
+
+## Per-model resilience
+
+Configured in **Model Inventory → Edit → Resilience** (all off by default):
+
+| Setting | Meaning |
+|---|---|
+| `RetryLimit` | Max retries against the *same* backend on retryable statuses (0 = no retries) |
+| `RetryStatuses` | CSV of retryable HTTP codes; empty = 429 + all 5xx |
+| `ReliabilityMode` | `off` (primary only), `failover` (ordered alternates), `distribute` (weighted random across the pool) |
+| `PrimaryShare` | Relative weight of the primary backend in `distribute` |
+| `AlternateEndpoints` | Raw URLs or registered model IDs (their own backend + key are used), each with a share |
+
+Semantics:
+
+- **Retries** also cover network failures and upstream timeouts; caller
+  cancellation is propagated, never retried.
+- **Failover** tries alternates in order; the first acceptable response wins; if
+  everything fails, the last upstream error is passed through.
+- **Distribute** picks one endpoint per request with probability share ÷ total.
+- Off mode + retry limit 0 = exactly one upstream call.
+- Streams are never cached mid-flight, retry/failover applies only up to the
+  first response byte.
+- Every attempt is recorded in the transaction log (`RelayAttempts` /
+  `RelayFailover`), so you can see failover in action.
+
+## The completion cache
+
+An opt-in response cache for chat completions and messages traffic, in two tiers:
+
+| Tier | What it does |
+|---|---|
+| **Exact** | Re-serves byte-identical prompts (default) |
+| **Semantic** | Uses local embeddings to re-serve near-duplicate prompts (per-scope threshold, default 0.98) |
+
+**Cache policy scopes**, caching is off until at least one scope exists. Each
+scope is `global`, `model`, `modelgroup`, `agent`, or `agentgroup`, with an
+enabled flag and an optional semantic threshold. Precedence for a request:
+**agent > agentgroup > model > modelgroup > global** (first match wins).
+
+**The cache key** is a hash of the endpoint path + the forwarded (post-mask) body,
+plus the resolved destination backend when the toggle is on (default, so
+different routed destinations never share cached completions). Auth headers are
+never part of the key.
+
+## Safety rules (both tiers)
+
+- Never caches streams, flagged or PII-masked prompts, blocked/violating
+  responses, or non-JSON/non-2xx upstreams.
+- The cache write is deferred to the response middleware, a guardrail-violating
+  body is never cached.
+- Cached bodies flow through response inspection on replay, cached content never
+  bypasses scanning.
+- `x-aifw-cache-refresh` bypasses the lookup but still allows the write.
+
+## Isolation & privacy
+
+- The cache identity comes **only from the authenticated principal**, never from
+  client-declared headers, a spoofed header cannot select another tenant's
+  policy or cached completions.
+- **Semantic matches are strictly scoped**: an entry only matches a request with
+  the same endpoint, resolved model, destination backend, and authenticated
+  caller identity, near-duplicate prompts never cross models, endpoints, or
+  tenants.
+- API-key principals get their own isolated cache namespace (keyed by the unique
+  key ID).
+- **Anonymous caching is off by default.** When enabled, anonymous callers are
+  partitioned by source IP (best-effort) and never get the semantic tier.
+- Total byte budget and entry cap are bounded so worst-case RAM stays controlled.
+
+## Known limitations
+
+- Caching applies to the native OpenAI chat path and the native Anthropic Messages
+  path; the two **facade** paths (OpenAI client → Claude backend, and Anthropic
+  client → OpenAI backend) bypass the cache.
+- A 2xx response whose body is not JSON (or is empty) is never cached.
+
+<Callout type="info" title="Related">
+- [Model routing & registry](/docs/guides/model-routing), routing rules that interact with resilience
+- [API reference](/docs/api-reference/openai-compatible-api), cache-related headers
+</Callout>

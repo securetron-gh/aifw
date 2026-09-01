@@ -1,0 +1,103 @@
+---
+title: "Model routing & registry"
+description: "How AI-FW decides which model handles a request, the model inventory, default model and backend, strict mode, and conditional routing rules."
+order: 2
+---
+
+The gateway makes two independent decisions for every request: **which model** to
+use, and **where** to send it. Both are governed by the model registry, a central
+inventory of every model your organization is allowed to call.
+
+## The model registry
+
+Models are not read from config files. They live in the **Model Inventory**:
+
+- A curated starter set is seeded on first run, each with its provider and backend
+  URL. They ship **disabled**, enable the ones you want to route traffic to.
+- **Add custom model**, model ID, provider, backend URL, optional API key.
+- **Edit**, update provider, backend URL, or API key of any registered model.
+- **Register**, promote a discovered (shadow) model to registered.
+- **Delete**, remove a custom model.
+
+Each model also carries a **protocol** (`openai` or `anthropic`). Model IDs that
+start with `claude-` default to the Anthropic protocol automatically; you can
+change it per model.
+
+## Default model & default backend
+
+| Setting | Question it answers | Where |
+|---|---|---|
+| **Default model** | Client omitted the `model` field, which model do we use? | Settings → Default Model |
+| **Default backend** | The resolved model has no backend URL of its own, where do we send it? | Settings → Default Backend |
+
+<Callout type="info" title="Settings is organized into tabs">
+The Settings page groups everything into tabs: General, Access, Identity,
+Model, Routing, Guardrails &amp; Inspection, Performance, Audit, Export, and
+Integrations. The guides reference them by name, for example
+**Settings -&gt; Default Model** or **Settings -&gt; Access Control**.
+</Callout>
+
+The full decision tree:
+
+```
+1. Client sends model "X"?
+      no  → insert the DEFAULT MODEL
+2. Is model X registered with its own backend URL?
+      yes → route to model X's backend, inject model X's key
+      no  → route to the DEFAULT BACKEND (inject default key if set)
+3. No backend anywhere?
+      → 400 backend_not_configured
+```
+
+## Strict mode
+
+The **"Reject Unregistered Models"** toggle in Settings → Default Model controls
+what happens when a client asks for a model that isn't in the registry:
+
+- **OFF (default):** unregistered models fall back to the default backend.
+- **ON:** requests for unregistered models are rejected with `400
+  model_not_registered`.
+
+Either way, requests for a **disabled** registered model are rejected with `400
+model_disabled`, that check is independent of strict mode.
+
+## Conditional routing rules
+
+Beyond the default routing, you can define **routing rules** that steer a request
+based on its context:
+
+| Field | Meaning |
+|---|---|
+| `agent` | Literal requesting agent ID |
+| `agentgroup` | Requesting agent belongs to a named agent group |
+| `agenttag` | Requesting agent's registry record carries the tag |
+| `ip` | Source IP |
+| `model` | Requested model ID |
+| `group` | Requested model is a member of a named model group |
+| `risk` | User risk score (numeric comparisons) |
+| `flag` | Prompt-scan flag code |
+| `header.<name>` | Request header value |
+
+Operators: `Equals`, `NotEquals`, `GreaterThan`, `GreaterOrEqual`, `LessThan`,
+`LessOrEqual`, `In`, `NotIn`, `Matches` (regex).
+
+- Conditions within a rule are **ANDed**; rules run in order and **first match
+  wins** (ordering expresses OR).
+- A rule's destination is a single registered model or a raw URL, model groups
+  and agent groups are **match sources only**.
+- Unknown agents, groups, or tags **fail closed** (no match), and malformed rules
+  never break the request path.
+- The destination model's own reliability and key settings apply (see the
+  [reliability guide](/docs/guides/reliability-caching)).
+
+## Shadow AI discovery
+
+Model IDs that appear in traffic but are **not** in the registry are flagged as
+**"Newly Discovered LLMs"** in the Model Inventory. You can review them, register
+the legitimate ones, and (with strict mode on) reject the rest, closing the shadow
+AI gap where teams use unapproved models.
+
+<Callout type="info" title="Related">
+- [Configure models & keys](/docs/how-to/configure-models-keys), a step-by-step recipe
+- [Reliability & caching](/docs/guides/reliability-caching), retries, failover, distribution
+</Callout>
