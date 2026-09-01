@@ -1,0 +1,45 @@
+---
+title: "Users reference"
+description: "Local users, roles, passwords, SSO, SCIM provisioning, and user groups."
+order: 8
+---
+
+The User Management page controls who can use the admin surface.
+
+## Local users
+
+- **Add / update** - create users, assign roles, set passwords, and mark
+  accounts active or inactive.
+- **Remove** - delete users, with self-delete and last-admin protection.
+- Passwords are stored as salted hashes (PBKDF2).
+
+## Roles
+
+| Role | Access |
+|---|---|
+| **Admin** | Full access to everything |
+| **Read-Only** | View the entire UI, all mutations blocked |
+| **AI-FW Admin** | Manage the AI firewall surface only |
+| **Agent-Trust Admin** | Manage the agent inventory and trust only |
+
+## SSO & provisioning
+
+- **OIDC SSO** - provider configuration (authority, client ID, secret, scopes,
+  callback), sign-in mode (`local`, `oidc`, or `both`), and a runtime role map.
+  Unknown or absent claims map to Read-Only.
+- **SCIM 2.0** - enable with a bearer secret; users and groups provision from
+  your identity provider, with roles assigned from matching groups.
+
+## User groups
+
+Named groups of users (local usernames and/or OIDC email or UPN) that share
+one or more roles. Members inherit the group's roles at sign-in; the effective
+role is the user's own role plus their groups' roles. Group changes apply on
+the next sign-in and all mutations are audited.
+
+See [Identity & access](/docs/guides/identity-access).
+
+<Callout type="info" title="Related">
+- [Identity & access](/docs/guides/identity-access)
+- [Admin-issued API keys](/docs/guides/agent-api-keys)
+</Callout>

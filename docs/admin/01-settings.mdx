@@ -1,0 +1,69 @@
+---
+title: "Settings reference"
+description: "Every tab of the Settings page - General, Access, Identity, Model, Routing, Guardrails & Inspection, Performance, Audit, Export, and Integrations."
+order: 1
+---
+
+The Settings page organizes every runtime configuration option into tabs. All
+settings are database-backed, apply instantly, and survive restarts.
+
+## General
+
+Gateway-wide basics, including the product version shown in the UI.
+
+## Access
+
+- **Authentication mode**: `required` (no token returns 401), `optional`
+  (anonymous allowed, tokens validated), or `passthrough` (any non-empty key
+  accepted and forwarded verbatim).
+- **Key mode**: `model` (registered model keys win upstream) or `client`
+  (the client's key is forwarded).
+- **Streaming**: `buffered` (full response scanned before delivery) or
+  `stream` (live tokens, mid-stream blocks terminate the stream).
+- **Manage API keys**: issue, generate, label, and revoke admin-issued keys.
+
+## Identity
+
+OIDC SSO provider configuration (authority, client ID, secret, scopes, sign-in
+mode, role map), SCIM provisioning, and forwarded-headers trust settings.
+
+## Model
+
+Default model, default backend, and the **Reject Unregistered Models** strict
+toggle.
+
+## Routing
+
+Conditional routing rules, model groups, agent groups, and agent tags used by
+the routing engine.
+
+## Guardrails & Inspection
+
+Prompt and response scanning, the semantic analysis tier (backend, endpoint,
+model, timeouts, fail-closed toggle), prompt compression, fail-open options,
+and Claude inference hooks.
+
+## Performance
+
+Reliability defaults, retry behavior, and per-model resilience defaults.
+
+## Audit
+
+Logging policy (per-direction content storage, retention), audit events, and
+the Audit Logs page size.
+
+## Export
+
+Log sources and the syslog collector (transport, host, port, facility,
+APP-NAME).
+
+## Integrations
+
+M365 Copilot admin bridge (app-only credentials and test connection) and the
+endpoint gateway (images, audio, files, fine-tuning, batches).
+
+<Callout type="info" title="Related">
+- [Identity & access](/docs/guides/identity-access)
+- [Audit logs & export](/docs/guides/audit-logs-export)
+- [Model routing](/docs/guides/model-routing)
+</Callout>

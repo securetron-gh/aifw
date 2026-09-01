@@ -16,6 +16,9 @@ that speaks the OpenAI API can point at the gateway instead of the provider.
 | `POST /v1/embeddings` | OpenAI-style embeddings (routed to a configured embeddings provider) |
 | `GET /v1/models` | List registered models |
 
+Common OpenAI-compatible route aliases are accepted alongside the canonical
+paths, so existing SDKs and tooling connect without changes.
+
 ## Endpoint Gateway (images, audio, files, fine-tuning, batches)
 
 Beyond chat, messages, and embeddings, the gateway can expose the remaining

@@ -1,0 +1,53 @@
+---
+title: "Model Inventory reference"
+description: "The Model Inventory page and every option: filters, enable/disable, add/edit/delete, protocols, resilience, compression, advanced parameters, groups, and routing rules."
+order: 2
+---
+
+The Model Inventory is the single place where models are managed.
+
+## List and filters
+
+The inventory table lists every registered, disabled, and discovered model.
+Server-side filters narrow the list by **search** (model id, provider, or
+backend URL) and by **status** (registered, disabled, discovered), composing
+with pagination.
+
+## Model actions
+
+- **Enable / Disable** - flips a model between `registered` and `disabled`.
+  Requests for a disabled model are rejected with `400 model_disabled`.
+- **Add custom model** - model ID, provider, backend URL, optional API key, and
+  protocol.
+- **Edit** - update provider, backend URL, API key, protocol, and per-model
+  settings.
+- **Register** - promote a discovered (shadow) model to registered.
+- **Delete** - remove a custom model.
+
+## Per-model settings (Edit modal)
+
+| Setting | What it controls |
+|---|---|
+| Protocol | `openai` or `anthropic` (facades translate between them) |
+| Key mode | Override the upstream key behavior for this model |
+| Streaming mode | Override buffered vs live streaming for this model |
+| Resilience | Retry limit, retry statuses, reliability mode (off/failover/distribute), primary share, alternate endpoints |
+| Compression | Per-model override (inherit / on / off) for prompt compression |
+| Advanced parameters | Inject-when-absent or force overrides for request parameters |
+
+## Model groups and routing rules
+
+The page also hosts the **Model Groups** card (create, edit, delete, member
+checkboxes) and the **Routing Rules** card (ordered list with enable/disable,
+reorder, and edit/delete). See the [model routing guide](/docs/guides/model-routing).
+
+## Shadow AI
+
+Unknown models seen in traffic appear under **Shadow AI (unregistered)** and on
+the dashboard, so you can review and register them.
+
+<Callout type="info" title="Related">
+- [Configure models & keys](/docs/how-to/configure-models-keys)
+- [Model routing & registry](/docs/guides/model-routing)
+- [Reliability & caching](/docs/guides/reliability-caching)
+</Callout>

@@ -1,0 +1,42 @@
+---
+title: "Agents reference"
+description: "The agent registry admin page - onboarding modes, identity proof, approval, groups and tags, webhooks, and deboarding."
+order: 10
+---
+
+The Agents page manages the agent registry and trust.
+
+## Registry policies
+
+- **Onboarding mode** - open, approval-required, or admin-only registration.
+- **Identity proof level** - whether agents must present a public key or
+  certificate thumbprint.
+- **Registration enforcement** - whether unregistered agents are rejected.
+- **Allowed authentication methods** - which of API keys, JWT, mTLS, or
+  Kerberos agents may use.
+
+## Agent records
+
+Each agent record shows its identity, owner and sponsor, tags, usage and data
+classification, status, and webhook. Admins can edit most fields; the identity
+proof is set by the client at registration and cannot be edited.
+
+## Groups and tags
+
+- **Agent groups** - named collections of agents (explicit ids and/or tags),
+  optionally owned by a user or user-group.
+- **Tags** - free-form labels used by routing rules, rule scoping, and groups.
+
+## Webhooks and deboarding
+
+Agents can register an outbound webhook for notifications. Deboarding removes
+an agent from the registry and suspends its identity, without requiring key
+rotation for other agents.
+
+See [Agent self-enrollment](/docs/tutorials/agent-self-enrollment) and the
+[A2A protocol reference](/docs/api-reference/a2a-agent-protocol).
+
+<Callout type="info" title="Related">
+- [Agent self-enrollment](/docs/tutorials/agent-self-enrollment)
+- [Model routing & registry](/docs/guides/model-routing)
+</Callout>

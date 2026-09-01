@@ -1,0 +1,88 @@
+---
+title: "Audit logs & export"
+description: "The metadata-only audit trail - logging policy, retention, audit events, and exporting to your SIEM via pull API or syslog."
+order: 10
+---
+
+Every transaction that flows through the gateway lands in a **metadata-only
+audit trail**: model, identity, source IP, latency, decision, and truncated
+previews. Raw content is never persisted unless your logging policy says
+otherwise, and the trail can be exported to your SIEM for review.
+
+## Logging policy
+
+Settings -> Logging controls what the transaction log stores per direction,
+independently for prompts and responses:
+
+| Mode | What is stored |
+|---|---|
+| **None** | Metadata only, no content |
+| **Partial** (default) | Content truncated to 2000 characters |
+| **Full** | Raw content up to the column cap (a deliberate privacy tradeoff) |
+
+Rule-level "Accept & No Log" always overrides, so sensitive traffic can opt out
+of content storage entirely.
+
+- **Retention** - transaction-log rows older than the configured window are
+  purged (default 30 days, `0` keeps everything). The purge runs at startup and
+  daily.
+- **Audit Logs page size** - server-side pagination on the Audit Logs page
+  (default 50 rows per page).
+
+## Audit events
+
+The **Events** tab records security and application-change events with actor,
+action, target, outcome, and detail:
+
+- **login / logout / auth_failed** - web-UI logins, logouts, and failed
+  credential attempts (with source IP)
+- **config_changed** - every settings change, with values **masked for
+  secrets** (API keys, tokens, secrets, passwords)
+- **rule_created / rule_updated / rule_deleted** - Rules Manager mutations
+- **user / role / key lifecycle** events and M365 bridge mutations
+
+## Log sources
+
+Four identifiable log types can be enabled or disabled independently, both for
+the pull API and for syslog forwarding (Settings -> Log Sources & Export):
+
+| Type | What it carries |
+|---|---|
+| App logs | Application log lines (category and task) |
+| Security events | Audit events (actor, action, target, outcome, detail) |
+| Access logs | Per-request outcome, mode, code, user, agent, path, IP, latency |
+| Transactions | Model, allowed/blocked, flag and block codes, tokens, IP |
+
+A disabled type returns `404` from the API and is never forwarded.
+
+## Pull API
+
+Admin-authenticated endpoints expose each log type (`/admin/audit`,
+`/admin/security-events`, `/admin/access-logs`, `/admin/transactions`) with:
+
+- a `count` limit (1-1000)
+- per-type filters (actor, action, outcome, user, agent, source IP, free-text
+  search, model, block code)
+
+Payloads are metadata only; transaction previews follow the logging policy.
+
+## Syslog forwarding
+
+Settings -> Syslog Collector pushes selected types to your SIEM:
+
+- **Transport**: UDP (RFC 5424 datagram), TCP (plain, octet-counted), or TLS
+  (RFC 5425 with optional client certificate and CA pinning)
+- **Host and port** (default 514, 6514 for TLS)
+- Configurable **facility** (default `local0`) and **APP-NAME**
+
+Forwarding is **non-blocking**: stores enqueue into a bounded channel and never
+wait on the collector; overflow is dropped and counted. The background
+forwarder retries with backoff and applies configuration changes live.
+
+**Never forwarded**: secrets (audit details are masked at the source) and raw
+prompt or completion content, only the metadata the logging policy permits.
+
+<Callout type="info" title="Related">
+- [Observability & dashboard](/docs/guides/observability-dashboard)
+- [Risk profiles & auto-block](/docs/guides/risk-profiles)
+</Callout>

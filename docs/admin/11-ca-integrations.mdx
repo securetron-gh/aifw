@@ -1,0 +1,33 @@
+---
+title: "CA integrations reference"
+description: "SCEP and ACME enrollment, the central CA trust store, and server-certificate enrollment."
+order: 11
+---
+
+The CA Integrations page manages the certificate infrastructure the platform
+relies on.
+
+## CA trust store
+
+A central store of CA certificates used across the platform:
+
+- CA chains fetched from **SCEP** (`GetCACert`) or **ACME** (finalize chain).
+- Uploaded **root and intermediate PEMs** for trust anchors.
+- The same store supplies **agent-mTLS trust anchors**, so runtime validation
+  of agent certificates happens against one unified source.
+
+## Server-certificate enrollment
+
+The gateway's server authentication (TLS) certificate is enrolled through a CA
+integration (SCEP or ACME, server-side key path) and stored as a PFX. The mTLS
+listener binds it with hot rotation and file or self-signed fallbacks.
+
+## Integrations
+
+Add, edit, and remove CA integration profiles (name, URL, credentials), and
+manage which integrations the gateway uses for enrollment.
+
+<Callout type="info" title="Related">
+- [Identity & access](/docs/guides/identity-access)
+- [Agent self-enrollment](/docs/tutorials/agent-self-enrollment)
+</Callout>

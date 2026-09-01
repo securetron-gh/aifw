@@ -1,0 +1,60 @@
+---
+title: "Observability & dashboard"
+description: "The AI-FW dashboard - traffic stats, latency, guardrail snapshot, 24-hour metrics, and the live Activity view."
+order: 9
+---
+
+The AI-FW Dashboard gives operators a live picture of everything flowing through
+the gateway. Raw content is never stored, so every metric here is built from
+metadata and truncated previews.
+
+## Traffic stats
+
+The top stat cards show:
+
+- **Allowed** and **blocked** request counts, plus the **block rate**
+- **P95 latency** across recent traffic
+- **Registered models**, **tracked agents**, and **tracked users**
+
+## Traffic mix and latency
+
+- A **traffic-mix donut** breaks traffic down by category.
+- A **latency sparkline** shows response times over time.
+- The **Guardrail Snapshot** is a stacked bar of block types, so you can see at a
+  glance what is being rejected and why.
+
+## 24-hour metrics row
+
+The 24h metrics row tracks the signals that matter day to day:
+
+- **Semantic flags** and semantic blocks
+- **Text-rule blocks** plus deny-by-default rejections
+- **Unique callers** and **token volume**
+- **Tokens saved (24h)** from prompt compression
+
+## Charts
+
+Below the stat cards, inline charts add depth:
+
+- A **prompt-lifecycle Sankey** - requests flowing to allowed or blocked, then to
+  clean, flagged, text-rule, semantic, or default-policy outcomes
+- A **7-day by 24-hour traffic heatmap**
+- **Requests by hour** (stacked area) and **token usage by hour** (stacked bars)
+- **Top models** and **top agents** by requests
+- **Top models** and **top IPs** by tokens
+
+## Live Activity view
+
+The Activity log shows transactions as they happen, including **real streamed
+content previews** for streaming requests. Every row carries the decision,
+latency, model, identity, and truncated previews per the logging policy.
+
+## Reports
+
+Usage and traffic reports can be generated from the dashboard for review or
+export, complementing the raw audit and access log APIs.
+
+<Callout type="info" title="Related">
+- [Audit logs & export](/docs/guides/audit-logs-export)
+- [Risk profiles & auto-block](/docs/guides/risk-profiles)
+</Callout>

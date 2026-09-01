@@ -1,0 +1,39 @@
+---
+title: "Risk Profiles reference"
+description: "User, agent, and IP risk leaderboards, category risk cards, risk auto-block, and reset actions."
+order: 4
+---
+
+The Risk Profiles page surfaces risk per identity and per category.
+
+## Leaderboards
+
+| Surface | Shows |
+|---|---|
+| **Users** | Risk score, semantic flags and blocks, violation count, first/last seen, identity badge (verified vs header), per-user reset, drill-down into recent transactions |
+| **Agents** | Risk scores (block violations only), requests, violations, band, reset |
+| **IP addresses** | Per-source-IP risk from blocks and semantic flags, with drill-down into the users and agents behind each IP |
+
+Summary cards: Total Users, New AI Users, High-Risk Users, and Semantic Flags.
+
+## Category risk cards
+
+All-time and 7-day detections per category with top entities and recent
+transactions:
+
+- **Semantic Risk Analysis** - blocks vs flags per semantic rule
+- **PII Risk** - SSNs, emails, API keys in traffic
+- **PCI (Card) Risk** - payment card numbers
+- **Health Data Risk** - medical terms and identifiers (heuristic, not an
+  attestation)
+
+## Risk auto-block
+
+Configure the count-based guard: violations within a rolling window trigger a
+cooldown block, with the switch, count, window, and duration configurable.
+See [Risk profiles & auto-block](/docs/guides/risk-profiles).
+
+<Callout type="info" title="Related">
+- [Risk profiles & auto-block](/docs/guides/risk-profiles)
+- [Audit logs & export](/docs/guides/audit-logs-export)
+</Callout>

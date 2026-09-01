@@ -1,0 +1,29 @@
+---
+title: "Dashboard reference"
+description: "Every card and control on the AI-FW Dashboard - traffic stats, latency, guardrail snapshot, 24-hour metrics, and charts."
+order: 6
+---
+
+The AI-FW Dashboard is the operational view of gateway traffic. Every metric is
+built from metadata and truncated previews; raw content is never stored.
+
+- **Traffic stats**: allowed, blocked, block rate, P95 latency, registered
+  models, tracked agents, tracked users.
+- **Traffic-mix donut** and **latency sparkline**.
+- **Guardrail snapshot**: a stacked bar of block types.
+- **24-hour metrics row**: semantic flags and blocks, text-rule blocks and
+  deny-by-default, unique callers, token volume, and tokens saved by
+  compression.
+- **Charts**: prompt-lifecycle Sankey, 7-day by 24-hour heatmap, requests and
+  tokens by hour, top models and agents by requests, top models and IPs by
+  tokens.
+- **Live Activity view**: transactions as they happen, including real streamed
+  content previews.
+
+See [Observability & dashboard](/docs/guides/observability-dashboard) for the
+full walkthrough.
+
+<Callout type="info" title="Related">
+- [Observability & dashboard](/docs/guides/observability-dashboard)
+- [Audit Logs reference](/docs/admin/audit-logs)
+</Callout>

@@ -1,0 +1,47 @@
+---
+title: "Rules Manager reference"
+description: "Built-in rules, custom rules, rule types and actions, per-rule options, priority, and AI-assisted rule creation."
+order: 3
+---
+
+The Rules Manager is where guardrail rules are created and governed.
+
+## Built-in rules
+
+The built-in "System" rules cover the common vectors: jailbreak detection, PII
+masking, toxicity filtering, and data-exfiltration blocking. Each can be
+enabled or disabled from the Rules Manager.
+
+## Custom rules
+
+Create, edit, enable/disable, and delete custom rules with:
+
+| Option | What it controls |
+|---|---|
+| **Type** | Regex / keyword, or semantic (natural-language intent) |
+| **Action** | `block`, `mask`, `log_only` (accept, no content persisted), or `accept` (accept and log) |
+| **Severity** | Your own triage label |
+| **Pattern / intent** | The regex, keyword, or intent description |
+| **Skip semantic check** | Opt a matching request out of the semantic tier |
+| **Source IP / subnet** | Apply the rule only inside a CIDR |
+| **Destination IP / subnet** | Apply the rule only when the backend resolves inside a CIDR |
+| **Key mode / streaming** | Pin upstream key behavior and streaming mode for matching requests |
+| **Rule scoping** | Apply to agents (ids, globs, tags, groups), exclude agents, exclude source IPs |
+
+## Evaluation
+
+Rules are evaluated in a fixed order: built-ins, then block rules, mask rules,
+accept/log rules, then the semantic tier, then the implied default action.
+See the [guardrails guide](/docs/guides/prompt-response-guardrails) for the
+full order. Deny always wins over accept.
+
+## Create Rule with AI
+
+The **Create Rule with AI** card drafts a rule from a plain-language objective
+(keyword or semantic), with an editable preview before the rule is committed.
+See [Create rules with AI](/docs/how-to/create-rules-with-ai).
+
+<Callout type="info" title="Related">
+- [Prompt & response guardrails](/docs/guides/prompt-response-guardrails)
+- [Semantic intent analysis](/docs/guides/semantic-intent-analysis)
+</Callout>
