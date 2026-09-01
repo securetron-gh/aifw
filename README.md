@@ -49,6 +49,7 @@ Every feature is documented on [aifw.io/docs](https://aifw.io/docs) and in this 
 | Fail-open options (opt-in) | [Guardrails guide](https://aifw.io/docs/guides/prompt-response-guardrails) |
 | Advanced parameters (parameter policy) | [How-To](https://aifw.io/docs/how-to/configure-models-keys) |
 | Admin pages (Settings, Inventory, Rules, Audit, ...) | [Admin reference](https://aifw.io/docs/admin/settings) |
+| Supported models & endpoints (200+) | [API reference](https://aifw.io/docs/api-reference/openai-compatible-endpoints) |
 
 ## Quick start
 

@@ -1,0 +1,139 @@
+---
+title: "OpenAI-compatible models & endpoints"
+description: "A live-fetched reference of 200+ OpenAI-compatible models and their vendor endpoints - Claude, OpenAI, Azure, Grok, Meta Llama, DeepSeek, AWS Bedrock, Qwen, Z.ai, and more."
+order: 4
+---
+
+The AI-FW Model Inventory accepts any OpenAI-compatible backend URL. This
+reference lists the current model IDs and endpoints for the major vendors,
+fetched from each vendor's documentation. **Model IDs change frequently, so
+always verify against the vendor's live model list before configuring a
+model.**
+
+Auth is `Authorization: Bearer <key>` unless noted. Claude models are reachable
+from OpenAI-compatible clients through the AI-FW Anthropic facade.
+
+## OpenAI
+
+Base URL: `https://api.openai.com/v1`
+
+- Flagship: `gpt-5.6-sol` (alias `gpt-5.6`), `gpt-5.6-terra`, `gpt-5.6-luna`
+- Specialized: `gpt-5.6-cyber`, `gpt-daybreak-red-latest`, `gpt-daybreak-blue-latest`, `gpt-image-2`, `gpt-realtime-2.1`, `gpt-realtime-2.1-mini`, `gpt-realtime-2`, `gpt-realtime-translate`, `gpt-realtime-1.5`, `gpt-4o-mini-tts`, `gpt-transcribe`, `gpt-live-transcribe`, `gpt-realtime-whisper`, `gpt-4o-transcribe`, `gpt-4o-mini-transcribe`
+- Stable families (verify): `gpt-4o`, `gpt-4o-mini`, `gpt-4.1`, `gpt-4.1-mini`, `gpt-4.1-nano`, `o3`, `o4-mini`, `text-embedding-3-small`, `text-embedding-3-large`
+
+```bash
+curl https://api.openai.com/v1/chat/completions -H "Authorization: Bearer $OPENAI_KEY" \
+  -d '{"model":"gpt-5.6-luna","messages":[{"role":"user","content":"Hi"}]}'
+```
+
+## Azure OpenAI / Microsoft Foundry
+
+Base URL: `https://<resource>.openai.azure.com/openai/v1` (deployment-based, `api-version` required). Auth: `api-key` header.
+
+- `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-chat-latest`, `gpt-5.5`, `gpt-5.4`, `gpt-5.4-mini`, `gpt-5.4-nano`, `gpt-5.4-pro`, `gpt-5.3-chat`, `gpt-5.3-codex`, `gpt-5.2`, `gpt-5.2-codex`, `gpt-5.1`, `gpt-5.1-chat`, `gpt-5.1-codex`, `gpt-5.1-codex-mini`, `gpt-5`, `gpt-5-mini`, `gpt-5-nano`, `sora-2`, `gpt-4.1`, `gpt-4.1-mini`, `gpt-4.1-nano`, `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`, `codex-mini`, `computer-use-preview`
+- Partner models sold by Azure: Grok (`grok-4.6`, `grok-4.3`, `grok-4-20-reasoning`, `grok-4-20-non-reasoning`, `grok-4.1-fast-reasoning`, `grok-4.1-fast-non-reasoning`, `grok-4`, `grok-code-fast-1`), Mistral (`Mistral-Large-3`, `mistral-medium-3-5`, `mistral-document-ai-2512`, `mistral-ocr-4-0`), Moonshot (`Kimi-K2.7-Code`, `Kimi-K2.6`, `Kimi-K2.5`), `MAI-Image-2.5`
+
+## Claude (Anthropic)
+
+Native base URL: `https://api.anthropic.com` (Anthropic `/v1/messages` format; auth `x-api-key`). Reachable from OpenAI-compatible clients via the AI-FW facade.
+
+- Current: `claude-fable-5-1`, `claude-opus-5`, `claude-sonnet-5`, `claude-haiku-4-5` (dated `claude-haiku-4-5-20251001`)
+- Legacy (still available): `claude-opus-4-8`, `claude-opus-4-7`, `claude-opus-4-6`, `claude-opus-4-5`, `claude-sonnet-4-6`, `claude-sonnet-4-5`, `claude-fable-5`
+- Bedrock IDs: `anthropic.claude-opus-5`, `anthropic.claude-sonnet-5`, `anthropic.claude-haiku-4-5`
+
+## X (Grok)
+
+Base URL: `https://api.x.ai/v1`
+
+- `grok-4.6`, `grok-4.5`, `grok-4.3`, `grok-4.20-0309-reasoning`, `grok-4.20-0309-non-reasoning`, `grok-4.20-multi-agent-0309`, `grok-build-0.1`
+- Media: `grok-imagine-image-2.0`, `grok-imagine-image`, `grok-imagine-image-quality`, `grok-imagine-video-1.5`, `grok-imagine-video`, `grok-voice-think-fast-2.0`
+- Aliases: `<model>` and `<model>-latest` track the newest release.
+
+## Meta (Llama)
+
+Meta has no first-party OpenAI-compatible API; Llama models are served by hosting partners:
+
+- **Groq**: `https://api.groq.com/openai/v1` with `llama-3.1-8b-instant`, `llama-3.3-70b-versatile`
+- **AWS Bedrock**: `meta.llama3-*`, `meta.llama3.1-*`, `meta.llama3.2-*`, `meta.llama3.3-*`, `meta.llama4-*`
+- **Together / Fireworks / DeepInfra / SambaNova**: `meta-llama/llama-3.3-70b-instruct` and other Llama 3.x/4 families (verify IDs)
+
+## AWS Bedrock
+
+OpenAI-compatible via the Bedrock Runtime (`InvokeModel`/`Converse`) with `accept: application/json`; model IDs use provider prefixes.
+
+- Amazon: `amazon.nova-*` (Nova 2 Lite, Nova 2 Sonic, Nova Pro, Nova Premier, Nova Lite, Nova Micro, Nova Canvas, Nova Reel, Nova Sonic), `amazon.titan-*` (text embeddings, multimodal embeddings, image)
+- Anthropic: `anthropic.claude-*` (5.x, 4.x, 3.x as listed above)
+- Meta: `meta.llama*`; Mistral: `mistral.*`; Cohere: `cohere.command-*`, `cohere.embed-*`, `cohere.rerank-*`; AI21: `ai21.jamba-*`; DeepSeek: `deepseek.*`; xAI: `grok-4.6`, `grok-4.3`; Z.AI: `zai.glm-*`; OpenAI: `openai.gpt-*`; Qwen: `qwen.*`; NVIDIA, MiniMax, Moonshot, Stability, Writer, TwelveLabs also available.
+
+## DeepSeek
+
+Base URL (OpenAI format): `https://api.deepseek.com` (also `/anthropic` for Anthropic format)
+
+- `deepseek-v4-flash`, `deepseek-v4-pro`, `deepseek-v4-flash-vision-exp`
+- On Bedrock: `deepseek-v3-2`, `deepseek-v3-1`, `deepseek-r1`
+
+## Mistral
+
+Base URL: `https://api.mistral.ai/v1`
+
+- `mistral-medium-3-5-26-04`, `mistral-small-4-0-26-03`, `mistral-large-3-25-12`, `ministral-3-14b-25-12`, `ministral-3-8b-25-12`, `ministral-3-3b-25-12`, `codestral-25-08`, `mistral-embed-23-12`, `codestral-embed-25-05`, `voxtral-mini-transcribe-26-02`, `voxtral-small-25-07`, `ocr-4-1`, `ocr-4-0`, `mistral-moderation-26-03`, `shieldstral-1-0`, `zai-glm-5-2` (Z.ai GLM hosted by Mistral)
+
+## Google Gemini
+
+OpenAI-compatible base URL: `https://generativelanguage.googleapis.com/v1beta/openai/`
+
+- `gemini-3.7-flash`, `gemini-3.6-flash`, `gemini-3.5-flash`, `gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-3.1-pro-preview`, `gemini-3-flash-preview`, `gemini-3.5-transcribe`, `gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.5-flash-lite`
+- Media: `gemini-3.1-flash-image` (Nano Banana 2), `gemini-2.5-flash-image` (Nano Banana), `veo-3.1-generate-preview`, `lyria-3-pro-preview`
+- Embeddings: `gemini-embedding-2-preview`, `gemini-embedding-001`
+
+## Groq
+
+Base URL: `https://api.groq.com/openai/v1`
+
+- Production: `llama-3.1-8b-instant`, `llama-3.3-70b-versatile`, `openai/gpt-oss-120b`, `openai/gpt-oss-20b`, `whisper-large-v3`, `whisper-large-v3-turbo`; systems: `groq/compound`, `groq/compound-mini`
+- Preview: `qwen/qwen3.6-27b`, `qwen/qwen3.8-27b`, `openai/gpt-oss-safeguard-20b`, `minimaxai/minimax-m2.7`, `canopylabs/orpheus-v1-english`, `meta-llama/llama-prompt-guard-2-*`
+- Live list: `GET https://api.groq.com/openai/v1/models`
+
+## Qwen (Alibaba Cloud Model Studio / DashScope)
+
+OpenAI-compatible base URL: `https://dashscope.aliyuncs.com/compatible-mode/v1`
+
+- Text: `qwen3.8-max`, `qwen3.7-plus`, `qwen3.8-flash`
+- Omni/vision: `qwen3.5-omni-plus`, `qwen3.5-omni-plus-realtime`
+- Image/video: `qwen-image-3.0-pro`, `wan2.7-image-pro`, `wan3.0-video`, `happyhorse-1.1-t2v`, `happyhorse-1.1-i2v`, `happyhorse-1.1-r2v`
+- Audio: `qwen-audio-3.0-tts-plus`, `qwen-audio-3.0-asr-flash-streaming`, `qwen-audio-3.0-asr-flash-filetrans`, `qwen-audio-3.0-realtime-plus`
+- Embeddings: `text-embedding-v4`, `qwen3.7-text-embedding`, `tongyi-embedding-vision-plus`, `qwen3-rerank`
+- Third-party on Model Studio: `deepseek-v4-pro`, `deepseek-v4-flash`, `kimi-k2.7-code`, `kimi-k3`, `glm-5.2`, `ZHIPU/GLM-5.3`, `MiniMax-M2.5`
+- Also hosted on Groq (`qwen/qwen3.6-27b`, `qwen/qwen3.8-27b`) and Bedrock (`qwen.*`)
+
+## Z.ai (GLM)
+
+OpenAI-compatible base URL: `https://open.bigmodel.cn/api/paas/v4` (Z.ai API)
+
+- Text: `glm-5.3`, `glm-5.3-flash`, `glm-5.2`, `glm-5.1`, `glm-5`, `glm-4.7`, `glm-4.7-flash`, `glm-4.7-flashx`, `glm-4.6`, `glm-4.5`, `glm-4.5-x`, `glm-4.5-air`, `glm-4.5-airx`, `glm-4.5-flash`, `glm-4-32b-0414-128k`
+- Vision: `glm-4.6v`, `glm-4.6v-flash`, `glm-4.6v-flashx`, `glm-4.5v`, `autoglm-phone-multilingual`
+- OCR/audio: `glm-ocr`, `glm-asr-2512`; media: `glm-image`, `cogview-4`, `cogvideox-3`
+- Also on Bedrock (`zai.glm-*`) and Mistral (`zai-glm-5-2`)
+
+## Other OpenAI-compatible hosts (verify IDs)
+
+| Vendor | Base URL | Representative models |
+|---|---|---|
+| OpenRouter | `https://openrouter.ai/api/v1` | 300+ models: `openai/gpt-5.6-luna`, `anthropic/claude-sonnet-5`, `google/gemini-3.7-flash`, `meta-llama/llama-3.3-70b-instruct`, `x-ai/grok-4.6`, `deepseek/deepseek-chat`, `qwen/qwen3-*` |
+| Together AI | `https://api.together.xyz/v1` | `meta-llama/Llama-3.3-70B-Instruct-Turbo`, `Qwen/Qwen2.5-72B-Instruct`, `deepseek-ai/DeepSeek-V3` |
+| Fireworks AI | `https://api.fireworks.ai/inference/v1` | `accounts/fireworks/models/llama-v3p3-70b-instruct`, `qwen2p5-72b-instruct`, `deepseek-v3` |
+| DeepInfra | `https://api.deepinfra.com/v1/openai` | `meta-llama/Llama-3.3-70B-Instruct`, `Qwen/Qwen2.5-72B-Instruct`, `deepseek-ai/DeepSeek-V3` |
+| Cerebras | `https://api.cerebras.ai/v1` | `llama-3.3-70b`, `llama3.1-8b`, `gpt-oss-120b` |
+| NVIDIA NIM | `https://integrate.api.nvidia.com/v1` | `meta/llama-3.3-70b-instruct`, `nvidia/llama-3.1-nemotron-*`, `deepseek-ai/deepseek-r1` |
+| SambaNova | `https://api.sambanova.ai/v1` | `Meta-Llama-3.3-70B-Instruct`, `Qwen/Qwen3-235B-A22B` |
+| Novita AI | `https://api.novita.ai/v3/openai` | `meta-llama/llama-3.3-70b-instruct`, `qwen/qwen-2.5-72b-instruct` |
+| Perplexity | `https://api.perplexity.ai` | `sonar-pro`, `sonar` |
+| Ollama (local) | `http://localhost:11434/v1` | any pulled tag, e.g. `llama3.3`, `qwen3` |
+| LM Studio (local) | `http://localhost:1234/v1` | any loaded model |
+| vLLM (self-host) | `http://<host>:8000/v1` | any served model |
+
+<Callout type="info" title="How to use with AI-FW">
+Register any of these backend URLs in the Model Inventory with the matching
+model ID and provider key, then route traffic through the gateway. See
+[Configure models & keys](/docs/how-to/configure-models-keys).
+</Callout>
