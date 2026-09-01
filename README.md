@@ -23,6 +23,33 @@ AI-FW is the **AI firewall and governance gateway** between your AI agents and t
 - [x] **Surfaces others cannot reach**: Claude inference hooks, MCP tool governance, M365 Copilot admin with agent sync
 - [x] **Opt-in endpoint gateway**: images, audio, files, fine-tuning, and batches under the same inspection pipeline
 
+## Features
+
+Every feature is documented on [aifw.io/docs](https://aifw.io/docs) and in this repository's `docs/` folder.
+
+| Feature | Doc |
+|---|---|
+| Prompt & response guardrails | [Guide](https://aifw.io/docs/guides/prompt-response-guardrails) |
+| Semantic intent analysis | [Guide](https://aifw.io/docs/guides/semantic-intent-analysis) |
+| Model routing & registry | [Guide](https://aifw.io/docs/guides/model-routing) |
+| Reliability: retries, failover, distribute | [Guide](https://aifw.io/docs/guides/reliability-caching) |
+| Completion cache (exact + semantic) | [Guide](https://aifw.io/docs/guides/reliability-caching) |
+| Prompt compression | [Guide](https://aifw.io/docs/guides/prompt-compression) |
+| Identity & access (IDAM) | [Guide](https://aifw.io/docs/guides/identity-access) |
+| Admin-issued API keys | [Guide](https://aifw.io/docs/guides/agent-api-keys) |
+| Risk profiles & auto-block | [Guide](https://aifw.io/docs/guides/risk-profiles) |
+| Observability & dashboard | [Guide](https://aifw.io/docs/guides/observability-dashboard) |
+| Audit logs & export (syslog / pull API) | [Guide](https://aifw.io/docs/guides/audit-logs-export) |
+| Claude inference hooks | [Guide](https://aifw.io/docs/guides/claude-inference-hooks) |
+| M365 Copilot admin & agent sync | [Tutorial](https://aifw.io/docs/tutorials/m365-copilot-bridge) |
+| Claude Code, Cursor & MCP tools | [Tutorial](https://aifw.io/docs/tutorials/claude-code-cursor-mcp) |
+| Agent self-enrollment (CSR + mTLS) | [Tutorial](https://aifw.io/docs/tutorials/agent-self-enrollment) |
+| Endpoint gateway (images, audio, files, batches) | [API reference](https://aifw.io/docs/api-reference/openai-compatible-api) |
+| A2A agent protocol | [API reference](https://aifw.io/docs/api-reference/a2a-agent-protocol) |
+| Fail-open options (opt-in) | [Guardrails guide](https://aifw.io/docs/guides/prompt-response-guardrails) |
+| Advanced parameters (parameter policy) | [How-To](https://aifw.io/docs/how-to/configure-models-keys) |
+| Admin pages (Settings, Inventory, Rules, Audit, ...) | [Admin reference](https://aifw.io/docs/admin/settings) |
+
 ## Quick start
 
 ### 1. Run the gateway
@@ -57,10 +84,11 @@ This repository holds the AI-FW knowledge base. The rendered version lives at [a
 | Section | Topics | Files |
 |---|---|---|
 | Getting Started | What AI-FW is, quick start | `docs/getting-started/` |
-| Guides | Guardrails, model routing, semantic analysis, identity, risk, reliability, prompt compression | `docs/guides/` |
+| Guides | Guardrails, routing, semantic analysis, identity, risk, reliability, compression, hooks, observability, audit, API keys | `docs/guides/` |
 | Tutorials | OpenAI SDK, Claude Code & MCP, M365 Copilot admin, agent self-enrollment | `docs/tutorials/` |
 | How-To | Models & keys, AI-assisted rules, Azure deployment | `docs/how-to/` |
 | API Reference | OpenAI-compatible, Anthropic Messages, A2A agent protocol | `docs/api-reference/` |
+| Admin Reference | Settings, Model Inventory, Rules Manager, Risk Profiles, Audit, M365, Users, Agents, CA, Agent Trust | `docs/admin/` |
 
 ## Enterprise
 
