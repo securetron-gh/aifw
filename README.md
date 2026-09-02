@@ -116,3 +116,5 @@ To report a security issue, contact us at [aifw.io/contact](https://aifw.io/cont
 ## Contributing
 
 PRs are welcome.
+
+We would also like to thank the Securetron.net team for their continued support in helping the community.
