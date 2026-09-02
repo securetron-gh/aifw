@@ -80,6 +80,17 @@ Open the gateway at `https://fqdn.aifw.io` and watch the transaction appear in t
 
 ## How it works
 
+```mermaid
+flowchart LR
+  A["Client / Agent"] --> B["AI-FW Gateway"]
+  B --> C["Inspect<br/>prompt scan, PII mask"]
+  C --> D["Govern<br/>rules, semantic tier"]
+  D --> E["Route<br/>registry, resilience"]
+  E --> F["LLM Backend"]
+  F --> G["Audit<br/>metadata-only log"]
+  G --> A
+```
+
 1. **Connect** - point any OpenAI-compatible or Anthropic client at the gateway (SDKs, Claude Code, Cursor, MCP tools, or plain HTTP)
 2. **Inspect** - every prompt and response is scanned, PII-masked, and semantically scored
 3. **Govern** - routing rules, risk profiles, and policy decide what flows and what is blocked
@@ -88,6 +99,22 @@ Open the gateway at `https://fqdn.aifw.io` and watch the transaction appear in t
 ## Documentation
 
 This repository holds the AI-FW knowledge base. The rendered version lives at [aifw.io/docs](https://aifw.io/docs).
+
+```mermaid
+flowchart TD
+  A["docs/"] --> B["getting-started/"]
+  A --> C["guides/"]
+  A --> D["tutorials/"]
+  A --> E["how-to/"]
+  A --> F["api-reference/"]
+  A --> G["admin/"]
+  B --> B1["what is AI-FW, quick start"]
+  C --> C1["guardrails, routing, semantic, identity, risk, reliability, compression, hooks, observability, audit, API keys"]
+  D --> D1["OpenAI SDK, Claude Code & MCP, M365, agent enrollment"]
+  E --> E1["models & keys, AI-assisted rules, Azure"]
+  F --> F1["OpenAI-compatible, Anthropic Messages, A2A, endpoints"]
+  G --> G1["settings, inventory, rules, risk, audit, dashboard, M365, users, keys, agents, CA, trust"]
+```
 
 | Section | Topics | Files |
 |---|---|---|
