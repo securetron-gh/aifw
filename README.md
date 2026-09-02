@@ -1,7 +1,7 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/securetron-logo.png">
   <img src="assets/logo-light.svg" width="96" height="96" alt="AI-FW logo">
 </picture>
 
