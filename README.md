@@ -37,29 +37,48 @@ Every feature is documented on [aifw.io/docs](https://aifw.io/docs) and in this 
 
 Legend: ✅ native · 🧩 via partner or plugin · ❌ not supported
 
-| Feature | Doc |
-|---|---|
-| Prompt & response guardrails | [Guide](https://aifw.io/docs/guides/prompt-response-guardrails) |
-| Semantic intent analysis | [Guide](https://aifw.io/docs/guides/semantic-intent-analysis) |
-| Model routing & registry | [Guide](https://aifw.io/docs/guides/model-routing) |
-| Reliability: retries, failover, distribute | [Guide](https://aifw.io/docs/guides/reliability-caching) |
-| Completion cache (exact + semantic) | [Guide](https://aifw.io/docs/guides/reliability-caching) |
-| Prompt compression | [Guide](https://aifw.io/docs/guides/prompt-compression) |
-| Identity & access (IDAM) | [Guide](https://aifw.io/docs/guides/identity-access) |
-| Admin-issued API keys | [Guide](https://aifw.io/docs/guides/agent-api-keys) |
-| Risk profiles & auto-block | [Guide](https://aifw.io/docs/guides/risk-profiles) |
-| Observability & dashboard | [Guide](https://aifw.io/docs/guides/observability-dashboard) |
-| Audit logs & export (syslog / pull API) | [Guide](https://aifw.io/docs/guides/audit-logs-export) |
-| Claude inference hooks | [Guide](https://aifw.io/docs/guides/claude-inference-hooks) |
-| M365 Copilot admin & agent sync | [Tutorial](https://aifw.io/docs/tutorials/m365-copilot-bridge) |
-| Claude Code, Cursor & MCP tools | [Tutorial](https://aifw.io/docs/tutorials/claude-code-cursor-mcp) |
-| Agent self-enrollment (CSR + mTLS) | [Tutorial](https://aifw.io/docs/tutorials/agent-self-enrollment) |
-| Endpoint gateway (images, audio, files, batches) | [API reference](https://aifw.io/docs/api-reference/openai-compatible-api) |
-| A2A agent protocol | [API reference](https://aifw.io/docs/api-reference/a2a-agent-protocol) |
-| Fail-open options (opt-in) | [Guardrails guide](https://aifw.io/docs/guides/prompt-response-guardrails) |
-| Advanced parameters (parameter policy) | [How-To](https://aifw.io/docs/how-to/configure-models-keys) |
-| Admin pages (Settings, Inventory, Rules, Audit, ...) | [Admin reference](https://aifw.io/docs/admin/settings) |
-| Supported models & endpoints (200+) | [API reference](https://aifw.io/docs/api-reference/openai-compatible-endpoints) |
+#### 🛡️ Security & guardrails
+
+<table>
+<tr><td width="50%"><b>🛡️ <a href="https://aifw.io/docs/guides/prompt-response-guardrails">Prompt &amp; response guardrails</a></b><br/><sub>offline, fail-closed scanning</sub></td><td width="50%"><b>🧠 <a href="https://aifw.io/docs/guides/semantic-intent-analysis">Semantic intent analysis</a></b><br/><sub>meaning-based policy scoring</sub></td></tr>
+<tr><td width="50%"><b>⚠️ <a href="https://aifw.io/docs/guides/prompt-response-guardrails">Fail-open options (opt-in)</a></b><br/><sub>availability escape hatches</sub></td><td width="50%"><b>🪟 <a href="https://aifw.io/docs/guides/claude-inference-hooks">Claude inference hooks</a></b><br/><sub>verdicts before inference</sub></td></tr>
+</table>
+
+#### 🪪 Identity & agents
+
+<table>
+<tr><td width="50%"><b>🔑 <a href="https://aifw.io/docs/guides/identity-access">Identity &amp; access (IDAM)</a></b><br/><sub>SSO, SCIM, RBAC, mTLS</sub></td><td width="50%"><b>🔑 <a href="https://aifw.io/docs/guides/agent-api-keys">Admin-issued API keys</a></b><br/><sub>hashed, instantly revocable</sub></td></tr>
+<tr><td width="50%"><b>🤝 <a href="https://aifw.io/docs/api-reference/a2a-agent-protocol">A2A agent protocol</a></b><br/><sub>agent-to-agent tasks</sub></td><td width="50%"><b>🎓 <a href="https://aifw.io/docs/tutorials/agent-self-enrollment">Agent self-enrollment</a></b><br/><sub>CSR + mTLS round trip</sub></td></tr>
+</table>
+
+#### 💸 Cost
+
+<table>
+<tr><td width="50%"><b>⚡ <a href="https://aifw.io/docs/guides/reliability-caching">Completion cache</a></b><br/><sub>exact + semantic hits</sub></td><td width="50%"><b>✂️ <a href="https://aifw.io/docs/guides/prompt-compression">Prompt compression</a></b><br/><sub>semantic-gated token savings</sub></td></tr>
+</table>
+
+#### 📊 Observability & audit
+
+<table>
+<tr><td width="50%"><b>📈 <a href="https://aifw.io/docs/guides/observability-dashboard">Observability &amp; dashboard</a></b><br/><sub>live activity view</sub></td><td width="50%"><b>🚨 <a href="https://aifw.io/docs/guides/risk-profiles">Risk profiles &amp; auto-block</a></b><br/><sub>block on violations</sub></td></tr>
+<tr><td width="50%"><b>🧾 <a href="https://aifw.io/docs/guides/audit-logs-export">Audit logs &amp; export</a></b><br/><sub>metadata-only, SIEM export</sub></td><td width="50%"></td></tr>
+</table>
+
+#### 🔌 Integrations
+
+<table>
+<tr><td width="50%"><b>🧩 <a href="https://aifw.io/docs/tutorials/m365-copilot-bridge">M365 Copilot admin</a></b><br/><sub>catalog, registry, usage</sub></td><td width="50%"><b>🛠️ <a href="https://aifw.io/docs/tutorials/claude-code-cursor-mcp">Claude Code, Cursor &amp; MCP</a></b><br/><sub>facades and MCP tools</sub></td></tr>
+<tr><td width="50%"><b>🎛️ <a href="https://aifw.io/docs/api-reference/openai-compatible-api">Endpoint gateway</a></b><br/><sub>images, audio, files, batches</sub></td><td width="50%"></td></tr>
+</table>
+
+#### ⚙️ Core & reference
+
+<table>
+<tr><td width="50%"><b>🧭 <a href="https://aifw.io/docs/guides/model-routing">Model routing &amp; registry</a></b><br/><sub>per-model keys, strict policy</sub></td><td width="50%"><b>🔁 <a href="https://aifw.io/docs/guides/reliability-caching">Reliability</a></b><br/><sub>retries, failover, distribute</sub></td></tr>
+<tr><td width="50%"><b>⚙️ <a href="https://aifw.io/docs/how-to/configure-models-keys">Advanced parameters</a></b><br/><sub>inject or force params</sub></td><td width="50%"><b>🗂️ <a href="https://aifw.io/docs/admin/settings">Admin pages</a></b><br/><sub>settings, rules, audit</sub></td></tr>
+<tr><td width="50%"><b>🌐 <a href="https://aifw.io/docs/api-reference/openai-compatible-endpoints">Supported models &amp; endpoints (200+)</a></b><br/><sub>OpenAI-compatible list</sub></td><td width="50%"></td></tr>
+</table>
+
 
 
 ![OpenAI](https://img.shields.io/badge/OpenAI-111?style=flat&logo=openai&logoColor=white) ![Anthropic](https://img.shields.io/badge/Anthropic-111?style=flat&logo=anthropic&logoColor=white) ![Google](https://img.shields.io/badge/Google-111?style=flat&logo=google&logoColor=white) ![Meta](https://img.shields.io/badge/Meta-111?style=flat&logo=meta&logoColor=white) ![xAI](https://img.shields.io/badge/xAI-111?style=flat&logo=xai&logoColor=white) ![DeepSeek](https://img.shields.io/badge/DeepSeek-111?style=flat&logo=deepseek&logoColor=white) ![Mistral](https://img.shields.io/badge/Mistral-111?style=flat&logo=mistral&logoColor=white) ![Groq](https://img.shields.io/badge/Groq-111?style=flat&logo=groq&logoColor=white) ![Azure](https://img.shields.io/badge/Azure-111?style=flat&logo=microsoftazure&logoColor=white) ![AWS](https://img.shields.io/badge/AWS-111?style=flat&logo=amazonaws&logoColor=white) ![Alibaba](https://img.shields.io/badge/Alibaba-111?style=flat&logo=alibabacloud&logoColor=white) ![Ollama](https://img.shields.io/badge/Ollama-111?style=flat&logo=ollama&logoColor=white)
