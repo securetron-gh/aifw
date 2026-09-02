@@ -71,12 +71,12 @@ docker run -d --name aifw-gateway -p 443:443 \
 ### 2. Make your first request
 
 ```bash
-curl http://fqdn.aifw.io:443/v1/chat/completions \
+curl https://fqdn.aifw.io/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"gpt-4o","messages":[{"role":"user","content":"Hello!"}]}'
 ```
 
-Open the gateway at `http://fqdn.aifw.io:443` and watch the transaction appear in the dashboard.
+Open the gateway at `https://fqdn.aifw.io` and watch the transaction appear in the dashboard.
 
 ## How it works
 
