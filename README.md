@@ -58,6 +58,9 @@ Every feature is documented on [aifw.io/docs](https://aifw.io/docs) and in this 
 | Admin pages (Settings, Inventory, Rules, Audit, ...) | [Admin reference](https://aifw.io/docs/admin/settings) |
 | Supported models & endpoints (200+) | [API reference](https://aifw.io/docs/api-reference/openai-compatible-endpoints) |
 
+> [!WARNING]
+> Model IDs change frequently. Always verify against each vendor's live model list before registering a model (see the [models reference](https://aifw.io/docs/api-reference/openai-compatible-endpoints)).
+
 ## Quick start
 
 ### 1. Run the gateway
@@ -68,6 +71,10 @@ docker run -d --name aifw-gateway -p 443:443 \
   aifw/gateway:latest
 ```
 
+
+> [!IMPORTANT]
+> The gateway serves HTTPS on port 443 by default. If port 443 is already in use on the host, map a different host port instead, for example `-p 8443:443`.
+
 ### 2. Make your first request
 
 ```bash
@@ -77,6 +84,11 @@ curl https://fqdn.aifw.io/v1/chat/completions \
 ```
 
 Open the gateway at `https://fqdn.aifw.io` and watch the transaction appear in the dashboard.
+
+> [!TIP]
+> To route traffic through the gateway, register these backend URLs and models in the AI-FW Model Inventory (see [Configure models and keys](https://aifw.io/docs/how-to/configure-models-keys)).
+
+## How it works
 
 ## How it works
 
