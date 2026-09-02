@@ -34,52 +34,31 @@ AI-FW is the **AI firewall and governance gateway** between your AI agents and t
 
 Every feature is documented on [aifw.io/docs](https://aifw.io/docs) and in this repository's `docs/` folder.
 
-
 Legend: ✅ native · 🧩 via partner or plugin · ❌ not supported
 
-#### 🛡️ Security & guardrails
-
-<table>
-<tr><td width="50%"><b>🛡️ <a href="https://aifw.io/docs/guides/prompt-response-guardrails">Prompt &amp; response guardrails</a></b><br/><sub>offline, fail-closed scanning</sub></td><td width="50%"><b>🧠 <a href="https://aifw.io/docs/guides/semantic-intent-analysis">Semantic intent analysis</a></b><br/><sub>meaning-based policy scoring</sub></td></tr>
-<tr><td width="50%"><b>⚠️ <a href="https://aifw.io/docs/guides/prompt-response-guardrails">Fail-open options (opt-in)</a></b><br/><sub>availability escape hatches</sub></td><td width="50%"><b>🪟 <a href="https://aifw.io/docs/guides/claude-inference-hooks">Claude inference hooks</a></b><br/><sub>verdicts before inference</sub></td></tr>
-</table>
-
-#### 🪪 Identity & agents
-
-<table>
-<tr><td width="50%"><b>🔑 <a href="https://aifw.io/docs/guides/identity-access">Identity &amp; access (IDAM)</a></b><br/><sub>SSO, SCIM, RBAC, mTLS</sub></td><td width="50%"><b>🔑 <a href="https://aifw.io/docs/guides/agent-api-keys">Admin-issued API keys</a></b><br/><sub>hashed, instantly revocable</sub></td></tr>
-<tr><td width="50%"><b>🤝 <a href="https://aifw.io/docs/api-reference/a2a-agent-protocol">A2A agent protocol</a></b><br/><sub>agent-to-agent tasks</sub></td><td width="50%"><b>🎓 <a href="https://aifw.io/docs/tutorials/agent-self-enrollment">Agent self-enrollment</a></b><br/><sub>CSR + mTLS round trip</sub></td></tr>
-</table>
-
-#### 💸 Cost
-
-<table>
-<tr><td width="50%"><b>⚡ <a href="https://aifw.io/docs/guides/reliability-caching">Completion cache</a></b><br/><sub>exact + semantic hits</sub></td><td width="50%"><b>✂️ <a href="https://aifw.io/docs/guides/prompt-compression">Prompt compression</a></b><br/><sub>semantic-gated token savings</sub></td></tr>
-</table>
-
-#### 📊 Observability & audit
-
-<table>
-<tr><td width="50%"><b>📈 <a href="https://aifw.io/docs/guides/observability-dashboard">Observability &amp; dashboard</a></b><br/><sub>live activity view</sub></td><td width="50%"><b>🚨 <a href="https://aifw.io/docs/guides/risk-profiles">Risk profiles &amp; auto-block</a></b><br/><sub>block on violations</sub></td></tr>
-<tr><td width="50%"><b>🧾 <a href="https://aifw.io/docs/guides/audit-logs-export">Audit logs &amp; export</a></b><br/><sub>metadata-only, SIEM export</sub></td><td width="50%"></td></tr>
-</table>
-
-#### 🔌 Integrations
-
-<table>
-<tr><td width="50%"><b>🧩 <a href="https://aifw.io/docs/tutorials/m365-copilot-bridge">M365 Copilot admin</a></b><br/><sub>catalog, registry, usage</sub></td><td width="50%"><b>🛠️ <a href="https://aifw.io/docs/tutorials/claude-code-cursor-mcp">Claude Code, Cursor &amp; MCP</a></b><br/><sub>facades and MCP tools</sub></td></tr>
-<tr><td width="50%"><b>🎛️ <a href="https://aifw.io/docs/api-reference/openai-compatible-api">Endpoint gateway</a></b><br/><sub>images, audio, files, batches</sub></td><td width="50%"></td></tr>
-</table>
-
-#### ⚙️ Core & reference
-
-<table>
-<tr><td width="50%"><b>🧭 <a href="https://aifw.io/docs/guides/model-routing">Model routing &amp; registry</a></b><br/><sub>per-model keys, strict policy</sub></td><td width="50%"><b>🔁 <a href="https://aifw.io/docs/guides/reliability-caching">Reliability</a></b><br/><sub>retries, failover, distribute</sub></td></tr>
-<tr><td width="50%"><b>⚙️ <a href="https://aifw.io/docs/how-to/configure-models-keys">Advanced parameters</a></b><br/><sub>inject or force params</sub></td><td width="50%"><b>🗂️ <a href="https://aifw.io/docs/admin/settings">Admin pages</a></b><br/><sub>settings, rules, audit</sub></td></tr>
-<tr><td width="50%"><b>🌐 <a href="https://aifw.io/docs/api-reference/openai-compatible-endpoints">Supported models &amp; endpoints (200+)</a></b><br/><sub>OpenAI-compatible list</sub></td><td width="50%"></td></tr>
-</table>
-
-
+| Category | Feature | Doc |
+|---|---|---|
+| Security & guardrails | [Prompt &amp; response guardrails](/docs/guides/prompt-response-guardrails) | [Read](https://aifw.io/docs/guides/prompt-response-guardrails) |
+| Security & guardrails | [Semantic intent analysis](/docs/guides/semantic-intent-analysis) | [Read](https://aifw.io/docs/guides/semantic-intent-analysis) |
+| Security & guardrails | [Fail-open options (opt-in)](/docs/guides/prompt-response-guardrails) | [Read](https://aifw.io/docs/guides/prompt-response-guardrails) |
+| Security & guardrails | [Claude inference hooks](/docs/guides/claude-inference-hooks) | [Read](https://aifw.io/docs/guides/claude-inference-hooks) |
+| Identity & agents | [Identity &amp; access (IDAM)](/docs/guides/identity-access) | [Read](https://aifw.io/docs/guides/identity-access) |
+| Identity & agents | [Admin-issued API keys](/docs/guides/agent-api-keys) | [Read](https://aifw.io/docs/guides/agent-api-keys) |
+| Identity & agents | [A2A agent protocol](/docs/api-reference/a2a-agent-protocol) | [Read](https://aifw.io/docs/api-reference/a2a-agent-protocol) |
+| Identity & agents | [Agent self-enrollment](/docs/tutorials/agent-self-enrollment) | [Read](https://aifw.io/docs/tutorials/agent-self-enrollment) |
+| Cost | [Completion cache](/docs/guides/reliability-caching) | [Read](https://aifw.io/docs/guides/reliability-caching) |
+| Cost | [Prompt compression](/docs/guides/prompt-compression) | [Read](https://aifw.io/docs/guides/prompt-compression) |
+| Observability & audit | [Observability &amp; dashboard](/docs/guides/observability-dashboard) | [Read](https://aifw.io/docs/guides/observability-dashboard) |
+| Observability & audit | [Risk profiles &amp; auto-block](/docs/guides/risk-profiles) | [Read](https://aifw.io/docs/guides/risk-profiles) |
+| Observability & audit | [Audit logs &amp; export](/docs/guides/audit-logs-export) | [Read](https://aifw.io/docs/guides/audit-logs-export) |
+| Integrations | [M365 Copilot admin](/docs/tutorials/m365-copilot-bridge) | [Read](https://aifw.io/docs/tutorials/m365-copilot-bridge) |
+| Integrations | [Claude Code, Cursor &amp; MCP](/docs/tutorials/claude-code-cursor-mcp) | [Read](https://aifw.io/docs/tutorials/claude-code-cursor-mcp) |
+| Integrations | [Endpoint gateway](/docs/api-reference/openai-compatible-api) | [Read](https://aifw.io/docs/api-reference/openai-compatible-api) |
+| Core & reference | [Model routing &amp; registry](/docs/guides/model-routing) | [Read](https://aifw.io/docs/guides/model-routing) |
+| Core & reference | [Reliability](/docs/guides/reliability-caching) | [Read](https://aifw.io/docs/guides/reliability-caching) |
+| Core & reference | [Advanced parameters](/docs/how-to/configure-models-keys) | [Read](https://aifw.io/docs/how-to/configure-models-keys) |
+| Core & reference | [Admin pages](/docs/admin/settings) | [Read](https://aifw.io/docs/admin/settings) |
+| Core & reference | [Supported models &amp; endpoints (200+)](/docs/api-reference/openai-compatible-endpoints) | [Read](https://aifw.io/docs/api-reference/openai-compatible-endpoints) |
 
 ![OpenAI](https://img.shields.io/badge/OpenAI-111?style=flat&logo=openai&logoColor=white) ![Anthropic](https://img.shields.io/badge/Anthropic-111?style=flat&logo=anthropic&logoColor=white) ![Google](https://img.shields.io/badge/Google-111?style=flat&logo=google&logoColor=white) ![Meta](https://img.shields.io/badge/Meta-111?style=flat&logo=meta&logoColor=white) ![xAI](https://img.shields.io/badge/xAI-111?style=flat&logo=xai&logoColor=white) ![DeepSeek](https://img.shields.io/badge/DeepSeek-111?style=flat&logo=deepseek&logoColor=white) ![Mistral](https://img.shields.io/badge/Mistral-111?style=flat&logo=mistral&logoColor=white) ![Groq](https://img.shields.io/badge/Groq-111?style=flat&logo=groq&logoColor=white) ![Azure](https://img.shields.io/badge/Azure-111?style=flat&logo=microsoftazure&logoColor=white) ![AWS](https://img.shields.io/badge/AWS-111?style=flat&logo=amazonaws&logoColor=white) ![Alibaba](https://img.shields.io/badge/Alibaba-111?style=flat&logo=alibabacloud&logoColor=white) ![Ollama](https://img.shields.io/badge/Ollama-111?style=flat&logo=ollama&logoColor=white)
 
@@ -95,7 +74,6 @@ docker run -d --name aifw-gateway -p 443:443 \
   -e ConnectionStrings__Default=Host=your-postgres;Database=aifw;Username=...;Password=... \
   aifw/gateway:latest
 ```
-
 
 > [!IMPORTANT]
 > The gateway serves HTTPS on port 443 by default. If port 443 is already in use on the host, map a different host port instead, for example `-p 8443:443`.
