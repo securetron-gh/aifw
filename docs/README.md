@@ -11,6 +11,7 @@ The AI-FW documentation, organized by section. The rendered version lives at
 4. [How-To](how-to/README.md) - focused recipes for admin tasks
 5. [API Reference](api-reference/README.md) - endpoints and protocols
 6. [Admin Reference](admin/README.md) - every admin page and its options
+7. [Community Edition](community-edition/README.md) - the free edition license and daily token allowance
 
 ## Editing
 

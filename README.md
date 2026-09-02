@@ -121,12 +121,14 @@ flowchart TD
   A --> E["how-to/"]
   A --> F["api-reference/"]
   A --> G["admin/"]
+  A --> H["community-edition/"]
   B --> B1["what is AI-FW, quick start"]
   C --> C1["guardrails, routing, semantic, identity, risk, reliability, compression, hooks, observability, audit, API keys"]
   D --> D1["OpenAI SDK, Claude Code & MCP, M365, agent enrollment"]
   E --> E1["models & keys, AI-assisted rules, Azure"]
   F --> F1["OpenAI-compatible, Anthropic Messages, A2A, endpoints"]
   G --> G1["settings, inventory, rules, risk, audit, dashboard, M365, users, keys, agents, CA, trust"]
+  H --> H1["license & daily token allowance"]
 ```
 
 | Section | Topics | Files |
@@ -137,6 +139,7 @@ flowchart TD
 | How-To | Models & keys, AI-assisted rules, Azure deployment | `docs/how-to/` |
 | API Reference | OpenAI-compatible, Anthropic Messages, A2A agent protocol | `docs/api-reference/` |
 | Admin Reference | Settings, Model Inventory, Rules Manager, Risk Profiles, Audit, M365, Users, Agents, CA, Agent Trust | `docs/admin/` |
+| Community Edition | [License & daily token allowance](https://aifw.io/docs/community-edition/license) | `docs/community-edition/` |
 
 ## 🧩 Enterprise
 

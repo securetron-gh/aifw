@@ -1,0 +1,58 @@
+---
+title: Community Edition license
+description: The AI-FW Community Edition is free with a published daily allowance of 2,000,000 tokens, enforced by the gateway against a machine-readable license document.
+order: 1
+---
+
+# Community Edition license
+
+The AI-FW Community Edition is free to use. This page is the full terms
+reference; the gateway enforces the allowance found in the published license
+document at
+[https://aifw.io/community-edition/license.json](https://aifw.io/community-edition/license.json).
+
+## Daily token allowance
+
+The Community Edition may process **2,000,000 tokens per rolling 24-hour
+window**. The count is the total of prompt and completion tokens across every
+request the gateway processes while running the Community Edition.
+
+The allowance is published in the license document so it can be updated
+without a gateway release. The gateway re-reads the document on a schedule and
+applies the current value.
+
+## What counts against the allowance
+
+- Prompt tokens for every request, before or after any gateway processing.
+- Completion tokens for every response, streamed or not.
+- Tokens consumed by tool calls and their results within a request.
+
+Requests that fail authentication or inspection are not processed, so they do
+not consume tokens. Tokens are not refunded when a response is interrupted.
+
+## Enforcement
+
+Enforcement is gateway-side and requires no license key, account, or phone
+home beyond reading the public license document.
+
+- Under the allowance, requests flow normally.
+- When the allowance is exhausted, the gateway returns a license-limit error
+  and does not forward the request.
+- Processing resumes automatically when the rolling window resets.
+
+The gateway never routes traffic around itself to bypass the limit. If you see
+license-limit errors in normal use, check the token counter on the Dashboard
+to confirm which window is active.
+
+## Updates to the allowance
+
+The license document carries a version number. When AI-FW changes the
+allowance or the terms, the version increments and the gateway logs the
+change. The current version is always visible at the license URL above.
+
+## Scaling beyond the Community Edition
+
+The Community Edition is free. For higher limits, guaranteed throughput, or
+enterprise features, [contact sales](https://aifw.io/contact). The full terms
+are published by AI-FW, a product of
+[Securetron.net](https://securetron.net).

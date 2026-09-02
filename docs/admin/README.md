@@ -1,6 +1,6 @@
 # Admin Reference
 
-Every admin page and its options. [Index](../README.md) · [Prev: API Reference](../api-reference/README.md)
+Every admin page and its options. [Index](../README.md) · [Prev: API Reference](../api-reference/README.md) · [Next: Community Edition](../community-edition/README.md)
 
 1. [Settings reference](01-settings.mdx) - all ten tabs
 2. [Model Inventory reference](02-model-inventory.mdx) - filters, per-model settings, groups, rules
