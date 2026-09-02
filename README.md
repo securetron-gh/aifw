@@ -30,9 +30,12 @@ AI-FW is the **AI firewall and governance gateway** between your AI agents and t
 - [x] **Surfaces others cannot reach**: Claude inference hooks, MCP tool governance, M365 Copilot admin with agent sync
 - [x] **Opt-in endpoint gateway**: images, audio, files, fine-tuning, and batches under the same inspection pipeline
 
-## Features
+## 🛡️ Features
 
 Every feature is documented on [aifw.io/docs](https://aifw.io/docs) and in this repository's `docs/` folder.
+
+
+Legend: ✅ native · 🧩 via partner or plugin · ❌ not supported
 
 | Feature | Doc |
 |---|---|
@@ -58,10 +61,13 @@ Every feature is documented on [aifw.io/docs](https://aifw.io/docs) and in this 
 | Admin pages (Settings, Inventory, Rules, Audit, ...) | [Admin reference](https://aifw.io/docs/admin/settings) |
 | Supported models & endpoints (200+) | [API reference](https://aifw.io/docs/api-reference/openai-compatible-endpoints) |
 
+
+![OpenAI](https://img.shields.io/badge/OpenAI-111?style=flat&logo=openai&logoColor=white) ![Anthropic](https://img.shields.io/badge/Anthropic-111?style=flat&logo=anthropic&logoColor=white) ![Google](https://img.shields.io/badge/Google-111?style=flat&logo=google&logoColor=white) ![Meta](https://img.shields.io/badge/Meta-111?style=flat&logo=meta&logoColor=white) ![xAI](https://img.shields.io/badge/xAI-111?style=flat&logo=xai&logoColor=white) ![DeepSeek](https://img.shields.io/badge/DeepSeek-111?style=flat&logo=deepseek&logoColor=white) ![Mistral](https://img.shields.io/badge/Mistral-111?style=flat&logo=mistral&logoColor=white) ![Groq](https://img.shields.io/badge/Groq-111?style=flat&logo=groq&logoColor=white) ![Azure](https://img.shields.io/badge/Azure-111?style=flat&logo=microsoftazure&logoColor=white) ![AWS](https://img.shields.io/badge/AWS-111?style=flat&logo=amazonaws&logoColor=white) ![Alibaba](https://img.shields.io/badge/Alibaba-111?style=flat&logo=alibabacloud&logoColor=white) ![Ollama](https://img.shields.io/badge/Ollama-111?style=flat&logo=ollama&logoColor=white)
+
 > [!WARNING]
 > Model IDs change frequently. Always verify against each vendor's live model list before registering a model (see the [models reference](https://aifw.io/docs/api-reference/openai-compatible-endpoints)).
 
-## Quick start
+## ⚡ Quick start
 
 ### 1. Run the gateway
 
@@ -88,9 +94,7 @@ Open the gateway at `https://fqdn.aifw.io` and watch the transaction appear in t
 > [!TIP]
 > To route traffic through the gateway, register these backend URLs and models in the AI-FW Model Inventory (see [Configure models and keys](https://aifw.io/docs/how-to/configure-models-keys)).
 
-## How it works
-
-## How it works
+## 🔄 How it works
 
 ```mermaid
 flowchart LR
@@ -108,7 +112,7 @@ flowchart LR
 3. **Govern** - routing rules, risk profiles, and policy decide what flows and what is blocked
 4. **Audit** - metadata-only logs and events record exactly what happened
 
-## Documentation
+## 📚 Documentation
 
 This repository holds the AI-FW knowledge base. The rendered version lives at [aifw.io/docs](https://aifw.io/docs).
 
@@ -137,7 +141,7 @@ flowchart TD
 | API Reference | OpenAI-compatible, Anthropic Messages, A2A agent protocol | `docs/api-reference/` |
 | Admin Reference | Settings, Model Inventory, Rules Manager, Risk Profiles, Audit, M365, Users, Agents, CA, Agent Trust | `docs/admin/` |
 
-## Enterprise
+## 🧩 Enterprise
 
 - ✅ **ISO 27001 certified and SOC2 compliant**
 - ✅ **Fail-closed by design** - no traffic while scanning is unhealthy
@@ -148,11 +152,11 @@ flowchart TD
 
 [Book a demo](https://aifw.io/contact) or [get started](https://aifw.io/get-started).
 
-## Security
+## 🔒 Security
 
 To report a security issue, contact us at [aifw.io/contact](https://aifw.io/contact).
 
-## Contributing
+## 🤝 Contributing
 
 PRs are welcome.
 
