@@ -1,16 +1,23 @@
 <div align="center">
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+  <img src="assets/logo-light.svg" width="96" height="96" alt="AI-FW logo">
+</picture>
+
 # AI-FW
 #### The AI Firewall & Governance Gateway
 
 **Every AI agent: identified, authorized, inspected, governed.**
 
-[Documentation](https://aifw.io/docs) · [Website](https://aifw.io) · [Get started](https://aifw.io/get-started)
+[Documentation](https://aifw.io/docs) · [Website](https://aifw.io) · [Get started](https://aifw.io/get-started) · [Enterprise](https://aifw.io/contact)
 
 [![Self-hosted](https://img.shields.io/badge/Self--hosted-Yes-8b5cf6)](https://aifw.io)
 [![Enterprise](https://img.shields.io/badge/Enterprise-Ready-8b5cf6)](https://aifw.io)
 [![ISO 27001](https://img.shields.io/badge/ISO_27001-Certified-8b5cf6)](https://aifw.io)
 [![SOC2](https://img.shields.io/badge/SOC2-Compliant-8b5cf6)](https://aifw.io)
+[![Docs](https://img.shields.io/badge/Docs-aifw.io%2Fdocs-8b5cf6)](https://aifw.io/docs)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-8b5cf6)](https://github.com/securetron-gh/aifw)
 
 </div>
 
