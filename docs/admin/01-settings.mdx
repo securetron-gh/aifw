@@ -1,6 +1,6 @@
 ---
 title: "Settings reference"
-description: "Every tab of the Settings page - General, Access, Identity, Model, Routing, Guardrails & Inspection, Performance, Audit, Export, and Integrations."
+description: "Every tab of the Settings page - General, Access, Identity, Model, Routing, Guardrails & Inspection, Performance, Audit, Export, Integrations, and Licensing."
 order: 1
 ---
 
@@ -62,7 +62,24 @@ APP-NAME).
 M365 Copilot admin bridge (app-only credentials and test connection) and the
 endpoint gateway (images, audio, files, fine-tuning, batches).
 
+## Licensing
+
+The edition of this gateway and its token allowance.
+
+- **Edition badge**: shows `Community` or `Licensed`. The edition is set when
+  the gateway is deployed and is read-only here.
+- **Usage vs allowance**: current token usage compared with the published
+  monthly allowance for the Community Edition (see the
+  [Community Edition license](/docs/community-edition/license)).
+- **Quota toggle**: enable or disable cap enforcement for this gateway.
+- **Upgrade**: a link to [contact sales](https://aifw.io/contact) for the
+  licensed edition.
+
+The Dashboard also shows a **Community Quota** stat card with usage against
+the allowance when the edition is Community.
+
 <Callout type="info" title="Related">
+- [Community Edition license](/docs/community-edition/license)
 - [Identity & access](/docs/guides/identity-access)
 - [Audit logs & export](/docs/guides/audit-logs-export)
 - [Model routing](/docs/guides/model-routing)

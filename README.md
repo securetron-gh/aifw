@@ -57,6 +57,7 @@ Legend: ✅ native · 🧩 via partner or plugin · ❌ not supported
 | Core & reference | [Model routing &amp; registry](docs/guides/02-model-routing.mdx) | [Read](https://aifw.io/docs/guides/model-routing) | ✅ |
 | Core & reference | [Reliability](docs/guides/06-reliability-caching.mdx) | [Read](https://aifw.io/docs/guides/reliability-caching) | ✅ |
 | Core & reference | [Advanced parameters](docs/how-to/01-configure-models-keys.mdx) | [Read](https://aifw.io/docs/how-to/configure-models-keys) | ✅ |
+| Core & reference | [Prompt Analyzer](docs/admin/03-rules-manager.mdx) | [Read](https://aifw.io/docs/admin/rules-manager) | ✅ |
 | Core & reference | [Admin pages](docs/admin/01-settings.mdx) | [Read](https://aifw.io/docs/admin/settings) | ✅ |
 | Core & reference | [Supported models &amp; endpoints (200+)](docs/api-reference/04-openai-compatible-endpoints.mdx) | [Read](https://aifw.io/docs/api-reference/openai-compatible-endpoints) | ✅ |
 
@@ -128,7 +129,7 @@ flowchart TD
   E --> E1["models & keys, AI-assisted rules, Azure"]
   F --> F1["OpenAI-compatible, Anthropic Messages, A2A, endpoints"]
   G --> G1["settings, inventory, rules, risk, audit, dashboard, M365, users, keys, agents, CA, trust"]
-  H --> H1["license & daily token allowance"]
+  H --> H1["license & monthly token allowance"]
 ```
 
 | Section | Topics | Files |
@@ -139,7 +140,7 @@ flowchart TD
 | How-To | Models & keys, AI-assisted rules, Azure deployment | `docs/how-to/` |
 | API Reference | OpenAI-compatible, Anthropic Messages, A2A agent protocol | `docs/api-reference/` |
 | Admin Reference | Settings, Model Inventory, Rules Manager, Risk Profiles, Audit, M365, Users, Agents, CA, Agent Trust | `docs/admin/` |
-| Community Edition | [License & daily token allowance](https://aifw.io/docs/community-edition/license) | `docs/community-edition/` |
+| Community Edition | [License & monthly token allowance](https://aifw.io/docs/community-edition/license) | `docs/community-edition/` |
 
 ## 🧩 Enterprise
 

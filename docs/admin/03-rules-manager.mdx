@@ -41,6 +41,21 @@ The **Create Rule with AI** card drafts a rule from a plain-language objective
 (keyword or semantic), with an editable preview before the rule is committed.
 See [Create rules with AI](/docs/how-to/create-rules-with-ai).
 
+## Prompt Analyzer
+
+The **Prompt Analyzer** card tests any prompt against the enabled inbound rule
+base without sending it upstream. It is safe under any license or quota state:
+no model call is made and no log rows are written.
+
+- **Matched rules**: each text, regex, or keyword rule that fires, with its
+  action and severity.
+- **Semantic scores**: per-rule cosine scores with block and flag banding,
+  plus the overall verdict (block, flagged, or allowed).
+- **Masked preview**: the redacted prompt when mask rules apply.
+
+Paste a prompt and run the analysis to see exactly which rules would fire and
+why, before you commit the rules to production.
+
 <Callout type="info" title="Related">
 - [Prompt & response guardrails](/docs/guides/prompt-response-guardrails)
 - [Semantic intent analysis](/docs/guides/semantic-intent-analysis)

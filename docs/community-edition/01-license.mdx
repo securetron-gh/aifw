@@ -1,30 +1,32 @@
 ---
 title: Community Edition license
-description: The AI-FW Community Edition is free with a published daily allowance of 2,000,000 tokens, enforced by the gateway against a machine-readable license document.
+description: The AI-FW Community Edition is free with a published monthly allowance of 100,000,000 tokens, enforced by the gateway against a machine-readable license document.
 order: 1
 ---
 
 # Community Edition license
 
 The AI-FW Community Edition is free to use. This page is the full terms
-reference; the gateway enforces the allowance found in the published license
-document at
-[https://aifw.io/community-edition/license.json](https://aifw.io/community-edition/license.json).
+reference; the gateway enforces the allowance it reads from the published
+license documents, with this page as the authoritative source.
 
-## Daily token allowance
+## Monthly token allowance
 
-The Community Edition may process **2,000,000 tokens per rolling 24-hour
-window**. The count is the total of prompt and completion tokens across every
-request the gateway processes while running the Community Edition.
+The Community Edition may process **100,000,000 tokens per month**, measured
+over a rolling 30-day window. The count is the total of prompt and completion
+tokens for every allowed transaction the gateway processes while running the
+Community Edition.
 
-The allowance is published in the license document so it can be updated
-without a gateway release. The gateway re-reads the document on a schedule and
-applies the current value.
+The allowance is published so it can be updated without a gateway release. The
+gateway re-reads the license documents hourly and applies the current value. If
+the published sources are unreachable, the gateway keeps the last known-good
+cap, and falls back to a conservative default until a fetch succeeds.
 
 ## What counts against the allowance
 
-- Prompt tokens for every request, before or after any gateway processing.
-- Completion tokens for every response, streamed or not.
+- Prompt tokens for every allowed request, before or after any gateway
+  processing.
+- Completion tokens for every allowed response, streamed or not.
 - Tokens consumed by tool calls and their results within a request.
 
 Requests that fail authentication or inspection are not processed, so they do
@@ -33,22 +35,28 @@ not consume tokens. Tokens are not refunded when a response is interrupted.
 ## Enforcement
 
 Enforcement is gateway-side and requires no license key, account, or phone
-home beyond reading the public license document.
+home beyond reading the public license documents.
 
 - Under the allowance, requests flow normally.
-- When the allowance is exhausted, the gateway returns a license-limit error
-  and does not forward the request.
-- Processing resumes automatically when the rolling window resets.
+- Above the allowance, a 7-day grace period still passes requests while the
+  gateway flags the overage on the Dashboard and in response headers.
+- Past the grace period, the gateway returns `429 license_quota_exceeded`
+  until usage falls back inside the rolling 30-day window.
 
-The gateway never routes traffic around itself to bypass the limit. If you see
-license-limit errors in normal use, check the token counter on the Dashboard
-to confirm which window is active.
+The gateway never routes traffic around itself to bypass the allowance. If you
+see license-quota errors in normal use, check the token meter on the Dashboard
+to confirm where usage stands within the window.
 
 ## Updates to the allowance
 
-The license document carries a version number. When AI-FW changes the
+The license documents carry a version number. When AI-FW changes the
 allowance or the terms, the version increments and the gateway logs the
-change. The current version is always visible at the license URL above.
+change. The current version is always visible at the license URLs below.
+
+- License document (machine-readable):
+  https://aifw.io/community-edition/license.json
+- License overview (human-readable):
+  https://aifw.io/community-edition/license
 
 ## Scaling beyond the Community Edition
 
