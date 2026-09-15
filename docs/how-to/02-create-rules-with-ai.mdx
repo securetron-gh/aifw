@@ -1,0 +1,60 @@
+---
+title: "Create rules with AI assistance"
+description: "Draft guardrail rules from a plain-language objective, the Rules Manager generates, validates, and lets you review before enforcing."
+order: 2
+---
+
+Writing regex by hand is tedious and brittle. The **Rules Manager** can draft a
+rule for you: describe the objective in plain language, pick a rule type, and the
+gateway generates a validated draft you review before it is ever enforced.
+
+## 1. Open Create Rule with AI
+
+In **Rules Manager**, find the **Create Rule with AI** card. Give your objective, 
+for example:
+
+- "Block prompts that try to make the model reveal its system instructions"
+- "Mask API keys in inbound requests"
+- "Flag requests mentioning competitor product names"
+
+## 2. Pick the rule type & action
+
+| Choice | Meaning |
+|---|---|
+| **Keyword** | Generate a regex/keyword rule from the objective |
+| **Semantic** | Generate a natural-language intent description for the semantic tier |
+| **Action** (optional) | Pin block / mask / accept / log, or let the generator decide |
+
+## 3. Review the draft
+
+The draft appears in an **editable preview form**: name, type, action, severity,
+and the generated pattern or intent description. The generated regex is validated
+before the preview renders, you can edit anything before committing.
+
+<Callout type="danger" title="AI drafts, humans enforce">
+The generated rule is **never enforced until an admin reviews it**. The objective
+you type is treated as untrusted input, it is only embedded in the prompt, never
+executed.
+</Callout>
+
+## 4. Create the rule
+
+Click **Create** to post to the standard rule pipeline, so duplicate-name checks,
+threshold validation, and action semantics all apply exactly as if you had written
+the rule by hand.
+
+## How generation works
+
+Generation uses the **AI Rule Generation** backend configured under **Settings →
+AI Rule Generation**, pick a registered model (its stored backend URL and key are
+used) or a custom model with endpoint and key. Without a configured backend the
+card shows a configuration message instead.
+
+The AI's reply is parsed as strict JSON (with one automatic re-prompt on garbage);
+the draft is always editable, so even an imperfect first pass is a useful starting
+point.
+
+<Callout type="info" title="Related">
+- [Prompt & response guardrails](/docs/guides/prompt-response-guardrails), evaluation order and rule actions
+- [Semantic intent analysis](/docs/guides/semantic-intent-analysis), semantic rule thresholds
+</Callout>

@@ -1,0 +1,86 @@
+---
+title: "Anthropic Messages API"
+description: "The /v1/messages endpoint, Anthropic-native chat, x-api-key auth, facades, and streaming."
+order: 2
+---
+
+The gateway speaks the **Anthropic Messages protocol** natively, so Claude-native
+clients (Claude Code, Claude CoWork, Claude Desktop) can route through the same
+inspection pipeline as OpenAI-compatible clients.
+
+## Endpoint
+
+| Method & path | Purpose |
+|---|---|
+| `POST /v1/messages` | Anthropic-style messages (native, and via facade to OpenAI-style backends) |
+
+## Authentication
+
+Claude clients authenticate with either:
+
+- `x-api-key: <key>` (console keys), or
+- `Authorization: Bearer <key>` (OAuth-style tokens).
+
+The gateway accepts both, applies the configured auth mode, and relays to the
+registered Claude model's backend with `anthropic-version: 2023-06-01` and the
+resolved key (rule → model → global precedence).
+
+## Standard request
+
+```json
+POST /v1/messages
+{
+  "model": "claude-sonnet-4-20250514",
+  "max_tokens": 4096,
+  "system": "You are a helpful assistant.",
+  "messages": [
+    { "role": "user", "content": "Hello!" }
+  ],
+  "stream": false
+}
+```
+
+The response uses the standard Anthropic schema (`content` blocks, `stop_reason`,
+usage metadata).
+
+## Model protocol metadata
+
+Each registered model carries an `apiStyle`, `openai` (default) or `anthropic`:
+
+- Model IDs starting with `claude-` are registered as `anthropic` automatically.
+- The protocol column in the Model Inventory can change it per model.
+
+## Facades
+
+The gateway translates between the two protocols transparently:
+
+- **Anthropic client → OpenAI-style model** (`/v1/messages` to a `gpt-*`
+  backend): the Messages request is translated to `chat/completions` and the
+  response/SSE back to Messages events (`content_block_delta`).
+- **OpenAI client → Claude backend** (`/v1/chat/completions` to a `claude-*`
+  backend): the request is translated to the Messages schema, `system` and
+  `developer` messages hoisted into the initial system message, `max_tokens`
+  defaulting to 4096, `temperature` clamped to 0–1, and the response translated
+  back to the OpenAI shape (`tool_use` → `tool_calls`).
+
+Both directions run through the same inspection pipeline; rule enforcement and
+the semantic tier are protocol-agnostic.
+
+## Streaming
+
+`stream: true` works with Anthropic `content_block_delta` frames, scanned
+token-by-token. A mid-stream violation terminates the SSE stream with a
+`guardrail_violation` error event (in the buffered mode, the full response is
+scanned before delivery and a violation returns `400`).
+
+## Error shape
+
+Blocked requests return `HTTP 400` with an error translated to the Anthropic error
+shape (and OpenAI errors → Anthropic shape on the reverse facade), so
+Anthropic-SDK clients can parse failures the same way they parse provider
+failures.
+
+<Callout type="info" title="Related">
+- [Claude Code, Cursor & MCP tools](/docs/tutorials/claude-code-cursor-mcp), client setup
+- [OpenAI-compatible API](/docs/api-reference/openai-compatible-api), the other native protocol
+</Callout>

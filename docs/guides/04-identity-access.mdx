@@ -1,0 +1,103 @@
+---
+title: "Identity & access"
+description: "Authentication modes, API keys, key precedence, streaming modes, mTLS, Kerberos, OIDC SSO, SCIM, and admin roles."
+order: 4
+---
+
+AI-FW authenticates two kinds of callers: **human users** (admins, via the
+web UI) and **machine agents** (via the gateway API). This guide covers both, plus
+the role model that scopes the admin surface.
+
+## Gateway authentication modes
+
+**Settings → Access Control → Authentication Mode** controls what the gateway
+requires from API callers:
+
+| Mode | Behavior |
+|---|---|
+| `required` | No Bearer token → `401`. Every caller must authenticate. |
+| `optional` | Anonymous callers allowed, but any token sent must be valid. |
+| `passthrough` | Any non-empty Bearer key is accepted on presence alone and forwarded verbatim upstream. |
+
+The gateway accepts `Authorization: Bearer` tokens and, for Anthropic-style
+clients, the `x-api-key` header.
+
+## Upstream key precedence
+
+Which API key reaches the model backend is a separate decision, resolved as
+**rule → model → global** (most specific wins):
+
+1. **Rule-level**, a key mode on a routing/guardrail rule applies when that rule
+   matches.
+2. **Model-level**, the key mode set per model in the Model Inventory.
+3. **Global**, Settings → Access Control → Key Mode, default `model`.
+
+| Effective mode | Upstream `Authorization` header |
+|---|---|
+| `model` | The model's registered key wins; the client's token is used only when the model has no key |
+| `client` | The client's Bearer key is forwarded verbatim; no client key → no auth header |
+
+<Callout type="warning" title="Think before enabling client key mode">
+With key mode `client`, the gateway no longer guarantees that only approved keys
+reach the backend, callers supply their own. Enable deliberately, e.g. together
+with `passthrough` auth for bring-your-own-key scenarios.
+</Callout>
+
+## Streaming modes
+
+Requests with `stream: true` are handled per the effective streaming mode
+(**rule → model → global**, same chain as key mode):
+
+| Mode | Behavior |
+|---|---|
+| `buffered` (default) | The full response is buffered and scanned before **any** token is delivered, strictest. A violation returns `HTTP 400` before delivery. |
+| `stream` | Tokens are relayed live through a sliding-window scanner; a mid-stream violation aborts the connection and terminates the SSE stream with a `guardrail_violation` event. |
+
+Requests without `stream: true` are always buffered regardless of mode.
+
+## Agent authentication
+
+Agents can prove identity in four ways:
+
+- **API keys**, admin-issued keys created in the Agent API Keys page. Each key
+  carries a unique key ID and is used for identity, cache isolation, and risk.
+- **JWT**, Bearer JWTs validated against your configured signing secret; the
+  `sub` claim becomes the agent identity.
+- **mTLS (RFC 8705)**, client certificates on a separate TLS listener; the
+  certificate identity (SPIFFE URI → subject key identifier → common name) maps to
+  the agent identity.
+- **Kerberos**, domain-joined Windows service-account agents authenticate with
+  `Authorization: Negotiate` and can enroll for an mTLS client certificate. UPN and
+  source-subnet allowlists are configurable.
+
+## Admin roles & the web UI
+
+The admin surface is protected by role-based access control with four roles:
+
+| Role | Access |
+|---|---|
+| **Admin** | Full access to everything |
+| **Read-Only** | View the entire UI; all mutations blocked, controls greyed out |
+| **AI-FW Admin** | Manage the AI firewall surface only, rules, models, settings, audit logs |
+| **Agent-Trust Admin** | Manage the agent inventory and trust, no access to the AI firewall section |
+
+Local users are managed on the User Management page, with per-user roles and
+password resets.
+
+## SSO & provisioning
+
+**OIDC SSO**, configure a generic OpenID Connect provider (authority, client ID,
+secret, scopes). Sign-in mode can be `local`, `oidc`, or `both`. A runtime role map
+translates identity-provider claims into AI-FW roles; unknown or absent claims
+map to **Read-Only** by default.
+
+**SCIM 2.0 provisioning**, expose user and group provisioning to your identity
+provider (Entra ID, Okta, …) with a bearer secret. `userName` maps to the local
+username, `active` to the enabled state, and a group whose display name matches a
+role assigns that role to its members. SCIM-provisioned users are passwordless, 
+they authenticate via SSO.
+
+<Callout type="info" title="Related">
+- [Configure models & keys](/docs/how-to/configure-models-keys), key handling per model
+- [Risk profiles & auto-block](/docs/guides/risk-profiles), risk scoring of identities
+</Callout>

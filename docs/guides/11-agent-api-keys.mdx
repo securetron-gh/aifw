@@ -1,0 +1,50 @@
+---
+title: "Admin-issued API keys"
+description: "Issue API keys for agent and tool access - hashed storage, immediate revocation, and per-key identity in the audit trail."
+order: 11
+---
+
+Admins can issue **API keys** that clients send as `Authorization: Bearer <key>`
+or `x-api-key` to authenticate to the gateway endpoints. Keys work in addition
+to JWT and identity-provider mechanisms.
+
+## Manage keys
+
+Open **Settings -> Access Control -> Manage API Keys** (available in every
+authentication mode):
+
+- **Add** - paste an existing key, or **Generate** a new one, with an optional
+  label for your own reference.
+- **Revoke** - revocation is immediate.
+
+Keys are stored as **SHA-256 hashes only** and are never stored in plaintext.
+
+## Behavior per authentication mode
+
+| Mode | How keys are treated |
+|---|---|
+| **Required** | Enforced - a missing or invalid token returns `401` |
+| **Optional** | Validated - a key is checked when present |
+| **Passthrough** | Not checked - presence only, and the client's token is forwarded upstream verbatim |
+
+## Upstream behavior
+
+API keys **authenticate the caller**; they are not forwarded upstream. With key
+mode `client`, the client's bearer (the API key) would be forwarded upstream,
+so use key mode `model` for registered-model keys instead.
+
+## Identity in the audit trail
+
+The audit and risk identity for an API-key client is the key's **unique
+registry id**, not its label. The label is carried as a name for new traffic
+(Risk Profiles shows it), and the Audit Logs page resolves the id to
+`label (id)` at display time, so a truncated id renders as something like
+`VSCode-01 (f54f7921...)`.
+
+API keys also isolate the completion cache per key (each key gets its own cache
+namespace), so cached answers never leak across keys.
+
+<Callout type="info" title="Related">
+- [Identity & access](/docs/guides/identity-access)
+- [Audit logs & export](/docs/guides/audit-logs-export)
+</Callout>

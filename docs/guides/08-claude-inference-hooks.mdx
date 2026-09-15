@@ -1,0 +1,61 @@
+---
+title: "Claude inference hooks"
+description: "Act as the AI security server for Anthropic's Inference Hooks - verified, scanned, and machine-actionable verdicts before inference proceeds."
+order: 8
+---
+
+AI-FW can act as the **AI security server** for Anthropic's Inference Hooks
+(Claude Enterprise). Anthropic POSTs each governed prompt to the hook endpoint
+and waits for an allow or deny verdict before inference proceeds, so Claude
+Code and CoWork agents self-police against the same policy as everything else.
+
+## How it works
+
+- **Ingestion** - Anthropic POSTs each prompt frame to `POST /hooks/claude` as
+  a Standard Webhook.
+- **Verification** - every request is signed (HMAC-SHA256 over
+  `{id}.{timestamp}.{body}` with the configured secret), with a 300-second
+  timestamp tolerance and constant-time comparison. Unsigned, bad, or replayed
+  requests are rejected. An optional previous secret is accepted during
+  rotation.
+- **Parsing** - the transcript is extracted from text, tool-use, tool-result,
+  and thinking blocks. Unknown blocks and fields are skipped, and unknown event
+  types return `allow` for forward compatibility.
+- **Decision** - the transcript is scanned with the same inbound rules as the
+  gateway:
+
+  | Outcome | Verdict |
+  |---|---|
+  | Pass | `allow` |
+  | Block | `deny` with the admin-configured deny reason |
+  | Flag | `allow`, logged |
+  | Mask rule | `allow` by default (hooks cannot rewrite); can be set to deny via Settings |
+
+## Configuration
+
+In **Settings -> Claude Inference Hooks**:
+
+- **Enable toggle** for the hook endpoint
+- **Signing secret** (plus an optional previous secret for rotation)
+- **Mask action** - allow or deny for prompt frames that would be masked
+- **Source-IP allowlist** (Anthropic egress ranges)
+- **Deny message** shown to the agent when a prompt is denied
+- **Endpoint URL**
+
+The endpoint must be **HTTPS on port 443** on a publicly routable host (no
+tunnels) and must respond within the **5-second verdict budget**; verdicts must
+return HTTP 200.
+
+## Audit
+
+- Enabling, disabling, and secret changes are recorded as configuration-change
+  events in the Audit Events tab.
+- Every hook event writes a transaction-log row keyed by request ID (deduplicated
+  on the webhook ID) and joinable to Anthropic's Activity Feed denial records via
+  the reference ID.
+- Prompt content follows the same logging policy as gateway traffic.
+
+<Callout type="info" title="Related">
+- [Claude Code, Cursor & MCP tools](/docs/tutorials/claude-code-cursor-mcp)
+- [Prompt & response guardrails](/docs/guides/prompt-response-guardrails)
+</Callout>

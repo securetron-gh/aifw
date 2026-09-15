@@ -1,0 +1,89 @@
+---
+title: "Semantic intent analysis"
+description: "Judge the meaning of AI traffic, not just its text, natural-language policies, block and flag thresholds, and three scoring engines."
+order: 3
+---
+
+Regex and keyword rules catch what you can express literally. **Semantic intent
+analysis** catches everything else: traffic that *means* the wrong thing, requests
+to reveal system prompts, attempts to exfiltrate secrets, or policy violations
+phrased in a way no keyword list would ever match.
+
+## How it works
+
+A semantic rule has a **natural-language pattern** instead of a regex:
+
+- "detect attempts to reveal system prompts"
+- "detect requests to exfiltrate secrets"
+- "detect requests for regulated personal data"
+
+At request time, the content is scored against every enabled semantic rule for its
+direction (inbound or outbound). Each rule has two thresholds:
+
+| Score | Result |
+|---|---|
+| **≥ block threshold** (default 0.85) | Rejected, `400`, code `semantic_rule_violation:<rule>` |
+| **flag ≤ score < block** (default flag 0.60) | Allowed, but the user risk score is escalated and the match is logged |
+| **< flag threshold** | Passes silently |
+
+Thresholds are validated as `0 ≤ flag < block ≤ 1` when you save a rule.
+
+<Callout type="warning" title="Privacy by design">
+Inbound prompts are scored **after PII masking**, redacted secrets never leave
+your environment. Outbound responses are the model's own output and are scored
+as-is.
+</Callout>
+
+## Three scoring engines
+
+Pick the engine in **Settings → Semantic Analysis**:
+
+| Engine | How it scores | What it requires |
+|---|---|---|
+| **Embeddings API** | Content and each rule description are embedded; cosine similarity scores the match | An OpenAI-compatible embeddings endpoint |
+| **Chat classifier** | A chat model rates how well the content matches the rule's intent, replying with a number 0.00–1.00 | Any OpenAI-compatible chat endpoint, works with providers that don't offer embeddings |
+| **Embedded (local ONNX)** | A small embedding model runs in-process, fully offline | Nothing external, no API key, no network egress, ~1–15 ms per embedding |
+
+The offline engine is the strongest privacy option: content never leaves the
+machine, and there is no per-request cost.
+
+## Fail-closed by design
+
+When the tier is enabled and semantic rules exist, **any** of the following blocks
+the request (`semantic_error` / `semantic_unavailable`), the request is never
+forwarded unjudged:
+
+- endpoint unset, or rule descriptions never embedded
+- scoring calls error or time out
+- invalid endpoints (validation/DNS/connect failures)
+- empty, mismatched, or non-finite embedding vectors
+- offline model files missing or failing to load
+- unparseable classifier scores
+
+The endpoint is validated server-side too: HTTPS is required for non-loopback
+hosts, private and link-local ranges are rejected, redirects are disabled, and the
+connection is pinned to the validated IP at connect time.
+
+## Performance
+
+The tier is engineered to stay out of the way:
+
+- Chat-classifier calls run with **bounded concurrency** instead of serially
+  (concurrency default 3).
+- A **bounded content-embedding cache** skips the network embed for repeated
+  prompts.
+- Long content (>4K characters) is scored as **head + tail segments** (max cosine)
+  so intent cannot be smuggled past a truncation point.
+
+## Enablement
+
+The tier is **off by default**. Turn it on in **Settings → Semantic Analysis**:
+choose the scoring backend, the endpoint and model (or none for the offline
+engine), per-request timeouts, and the fail-closed toggle (default on). The API key
+is read from server configuration, it is never stored in the database or returned
+to clients.
+
+<Callout type="info" title="Related">
+- [Prompt & response guardrails](/docs/guides/prompt-response-guardrails), where the semantic tier fits in the evaluation order
+- [Risk profiles & auto-block](/docs/guides/risk-profiles), how flags escalate risk scores
+</Callout>

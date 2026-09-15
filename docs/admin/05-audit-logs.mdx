@@ -1,0 +1,30 @@
+---
+title: "Audit Logs reference"
+description: "The transaction log, filters, the Events tab, and page-size settings."
+order: 5
+---
+
+The Audit Logs page shows the metadata-only transaction trail.
+
+## Transactions
+
+Every request is logged with model, identity, source IP, latency, decision, and
+truncated previews per the logging policy. Server-side filters narrow the list
+by user, agent, source IP, model, block code, and free-text search, with
+server-side pagination (default 50 rows per page, Prev/Next controls).
+
+## Events
+
+The **Events** tab records security and application-change events: logins,
+logouts, failed credential attempts, configuration changes (secrets masked),
+rule mutations, user and key lifecycle events, and M365 bridge mutations.
+
+## Export
+
+From the same page, exports feed the pull API and syslog collector. See
+[Audit logs & export](/docs/guides/audit-logs-export) for the full details.
+
+<Callout type="info" title="Related">
+- [Audit logs & export](/docs/guides/audit-logs-export)
+- [Observability & dashboard](/docs/guides/observability-dashboard)
+</Callout>

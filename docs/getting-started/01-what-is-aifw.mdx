@@ -1,0 +1,76 @@
+---
+title: "What is AI-FW?"
+description: "An overview of the AI-FW gateway, what it does, how it fits into your stack, and why it is fail-closed by design."
+order: 1
+---
+
+AI-FW is an **AI firewall and governance gateway** that sits between your AI
+agents and the large-language-model backends they call. Every prompt and response
+flows through the gateway, where it is inspected, scored against policy, routed to
+the right model, and audited, all in real time, with no agent-side code changes.
+
+## What it does
+
+| Capability | What it means for you |
+|---|---|
+| **Prompt inspection** | Jailbreak and prompt-injection attempts are blocked, PII is masked, and your own rules are enforced before anything reaches the model. |
+| **Response inspection** | Toxicity, leaked credentials, and data exfiltration (system prompts, internal IPs, private keys) are caught on the way back. |
+| **Model routing** | Each request is routed to the right model and backend, with per-model API keys held server-side. |
+| **Semantic intent analysis** | Traffic is scored against natural-language policies, not just matched against keywords. |
+| **Identity & access** | Agents and users authenticate with API keys, JWT, mutual TLS, or Kerberos; RBAC scopes the admin surface. |
+| **Risk & audit** | Rolling risk scores per user, agent, and IP; automatic blocking; a metadata-only audit log. |
+| **Reliability & caching** | Per-model retries, failover, and load distribution, plus an opt-in completion cache. |
+
+## Two surfaces
+
+AI-FW brings two integrated surfaces together:
+
+**AI-FW, the AI firewall & governance gateway.** The traffic layer described above:
+an OpenAI-compatible and Anthropic-compatible endpoint that agents point at instead
+of the model provider directly.
+
+**Agent Trust, the agent registry and A2A protocol.** A registry where AI agents
+onboard with an identity, discover services, and request PKI operations, 
+certificate issuance, renewal, and revocation, over the Agent2Agent (A2A)
+task-based protocol. Agents authenticate with certificates (mTLS), and the same
+governance, risk, and audit machinery applies to them.
+
+## How it fits into your stack
+
+```
+Your agents & tools (OpenAI SDKs, Claude Code, Cursor, MCP, custom agents)
+                          │
+                          ▼
+              ┌───────────────────────┐
+              │   AI-FW gateway     │   inspect → govern → route → audit
+              └───────────────────────┘
+                          │
+                          ▼
+     LLM backends (OpenAI, DeepSeek, Anthropic, Mistral, Groq,
+                   OpenRouter, Ollama, vLLM, LM Studio, …)
+```
+
+Clients keep using their normal SDKs, the only change is the base URL. The gateway
+speaks the **OpenAI chat-completions protocol** and the **Anthropic Messages
+protocol**, and translates between them, so Claude-native tools can use OpenAI-style
+models and vice-versa.
+
+## The operating philosophy
+
+AI-FW is **fail-closed by design**:
+
+- A scanner error or missing configuration **blocks** the request, it never
+  forwards traffic unfiltered.
+- The semantic tier blocks on any scoring error or timeout rather than passing a
+  request through unjudged.
+- New models start **disabled** until an administrator explicitly enables them.
+- Raw prompt and response content is **never persisted**, the audit log keeps
+  metadata and truncated previews only.
+
+That means an outage or misconfiguration can never silently turn your AI pipeline
+into an ungoverned one.
+
+<Callout type="info" title="Next step">
+Ready to try it? Follow the [quick start](/docs/getting-started/quick-start) to get
+a gateway running in minutes.
+</Callout>

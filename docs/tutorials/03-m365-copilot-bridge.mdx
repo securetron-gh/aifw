@@ -1,0 +1,94 @@
+---
+title: "M365 Copilot admin & agent sync"
+description: "Manage Microsoft 365 Copilot admin surfaces from AI-FW with app-only auth - agent catalog, agent registry, usage reports, and interaction export."
+order: 3
+---
+
+The **M365 Copilot admin** bridge connects AI-FW to Microsoft 365 Copilot
+admin surfaces through Microsoft Graph with **application permissions**
+(app-only, client-credentials) from your Entra app registration. No user
+sign-in, no delegated consent, no redirect URI.
+
+What it manages:
+
+- **Copilot agent catalog (packages)** - live inventory of agents in the
+  organization, with per-agent details (name, type, platform, hosts, publisher,
+  version, blocked state, deployment).
+- **Agent registry** - create, view, update, and delete agent registrations.
+  This is how you **sync agents registered on AI-FW with M365**.
+- **Usage analytics** - per-user activity, user-count summaries, and daily
+  user-count trends (D7 / D30 / D90 / D180).
+- **Interaction export** - export a user's Copilot prompt and response history
+  for review.
+
+<Callout type="warning" title="Preview API">
+The Agent Registry endpoint is `/beta` and in preview: Microsoft states that
+beta APIs are subject to change and not supported for production use. The
+catalog, usage reports, and interaction export are `/v1.0` (GA).
+</Callout>
+
+## What changed
+
+Earlier versions of the bridge used a delegated authorization-code flow and
+managed the Copilot **policy-settings** API (allow web search, chat pinning,
+image generation) with drift detection and push/pull. That flow was removed:
+Microsoft does not support Application permissions for the policy-settings API,
+so those chat-level guardrails can never be managed app-only and are out of
+scope. Deployments on the old flow must re-provision the app registration with
+the application permissions below.
+
+## 1. One-time setup in Microsoft Entra
+
+1. Register an app in Microsoft Entra (or use an existing Enterprise App) and
+   grant the **application** permissions:
+
+   | Permission | Surface |
+   |---|---|
+   | `AgentRegistration.ReadWrite.All` | Agent registry |
+   | `CopilotPackages.ReadWrite.All` | Agent catalog |
+   | `Reports.Read.All` | Usage reports |
+   | `AiEnterpriseInteraction.Read.All` | Interaction export |
+
+   Complete **admin consent** in the Entra portal. No redirect URI is needed,
+   app-only auth never redirects a browser.
+
+2. In AI-FW: **Settings → M365 Copilot Admin** → enable the bridge and enter the
+   **Tenant ID / Client ID / Client Secret** from the app registration.
+
+3. Click **Test connection**. AI-FW acquires an app-only token and lists the
+   Copilot agent catalog to prove the application permissions work.
+
+## 2. Work with the M365 Copilot page
+
+Once connected, the **M365 Copilot** page shows:
+
+- the **agent catalog** with per-agent details,
+- the **agent registry** for creating and managing agent registrations,
+  including syncing agents registered on AI-FW with M365,
+- **usage analytics** for the selected period,
+- **interaction export** for a user's Copilot history.
+
+## Behavior and safety
+
+- **App-only everywhere** - every Graph call carries a client-credentials token,
+  cached until expiry. There is no user, refresh token, or redirect URI.
+- **Fail-closed** - Graph errors abort the action and surface in the UI; the
+  client secret is masked and never returned to the browser.
+- Every registry mutation and report load is written to the audit log.
+- **Mock Graph** routes all Graph calls to a built-in in-memory mock for demos
+  and automated tests. It is only honored in non-production environments, so
+  the bridge can never be silently skipped in production.
+
+## Scope note
+
+App-only is limited to the Copilot admin APIs Microsoft supports with
+application permissions: agent catalog, agent registry, usage reports, and
+interaction export. The **policy-settings** API (`copilotPolicySetting`) is
+Application = Not supported per Microsoft docs, so chat-level guardrails (allow
+web search, chat pinning, image generation) cannot be managed app-only and are
+out of scope for this bridge.
+
+<Callout type="info" title="Related">
+- [Identity & access](/docs/guides/identity-access) - the roles that can manage the bridge
+- [Risk profiles & auto-block](/docs/guides/risk-profiles) - auditing the bridge's changes
+</Callout>

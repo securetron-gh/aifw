@@ -1,0 +1,115 @@
+---
+title: "Prompt & response guardrails"
+description: "How AI-FW inspects every prompt and response, built-in rules, custom rules, evaluation order, and rule actions."
+order: 1
+---
+
+AI-FW inspects **inbound prompts** (before they reach the model) and
+**outbound responses** (before they reach the client). The built-in rules cover the
+most common attack and compliance vectors out of the box; custom rules extend them
+to your own policy.
+
+## Built-in rules
+
+| Rule | Direction | Action | What it catches |
+|---|---|---|---|
+| Jailbreak detection | inbound | block | "Ignore previous instructions", system-override prompts, DAN mode, safety bypass |
+| PII masking | inbound | mask | Social security numbers, credit cards, emails, API keys → `[REDACTED_*]` |
+| Toxicity filter | outbound | block | Hate, discrimination, and harassment patterns |
+| Data exfiltration guard | outbound | block | Leaked system prompts, internal IPs, credentials, private keys |
+
+Built-in rules can be enabled or disabled individually from the **Rules Manager**
+(shown as "System" rules). Custom rules can be added, edited, enabled, disabled,
+and deleted.
+
+## How rules are evaluated
+
+Every request is evaluated in a fixed order, left to right. The first decisive
+outcome wins; later steps only run while the request is still undecided:
+
+| # | Step | What happens on a match |
+|---|---|---|
+| 1 | **Built-in rules** | System rules run first, jailbreak, PII mask, toxicity, exfiltration. |
+| 2 | **Block rules** | Reject with `400 guardrail_violation`. A block always wins, even if an accept rule would also match. |
+| 3 | **Mask rules** | First match rewrites the content and short-circuits the group. |
+| 4 | **Accept / Log rules** | First match passes the request; `log_only` also suppresses preview persistence. |
+| 5 | **Semantic tier** | Scores the request against natural-language policies, see the [semantic analysis guide](/docs/guides/semantic-intent-analysis). |
+| 6 | **Implied rule** | Terminal step: apply the configured default action, allow, or block (deny-by-default). |
+
+<Callout type="warning" title="A block always wins">
+Deny-overrides are absolute: if a block rule matches, nothing else runs, even an
+accept rule that would also match. Only text-type rules (regex / keyword / token
+limits / model / user) can match in the block group.
+</Callout>
+
+## Rule actions
+
+Every custom rule has one of four actions:
+
+| Action | Effect |
+|---|---|
+| `block` | Reject with `400 guardrail_violation` (always wins over other actions) |
+| `mask` | Rewrite matching text with a replacement value before forwarding |
+| `log_only` | Accept & no log, pass through; the match is recorded but no content is persisted |
+| `accept` | Accept & log, pass through; prompt and response previews are stored in the audit trail |
+
+## Per-rule options
+
+- **Skip semantic check**, when enabled and the rule matches, the request bypasses
+  the semantic intent tier.
+- **Source IP / subnet**, the rule applies only when the client's IP is inside the
+  CIDR (e.g. `10.0.0.0/8`, `192.168.1.5`).
+- **Destination IP / subnet**, the rule applies only when the resolved backend IP
+  of the model is inside the CIDR.
+- **Key mode & streaming override**, a rule can pin the upstream key behavior and
+  streaming mode for requests it matches (see the [identity guide](/docs/guides/identity-access)).
+
+## What a blocked request looks like
+
+Blocked transactions return `HTTP 400` with a structured error:
+
+```json
+HTTP 400
+{
+  "error": {
+    "message": "The transaction was intercepted and blocked by corporate AI security policy.",
+    "type": "guardrail_violation",
+    "code": "prompt_injection_detected",
+    "details": {
+      "policy_id": "BUILTIN-JAILBREAK",
+      "timestamp": "2025-01-15T10:00:00Z"
+    }
+  }
+}
+```
+
+plus the `X-Gateway-Security: Violated` response header.
+
+## Structure-preserving rewrites
+
+When PII masking or the default-model substitution rewrites a request, the rewrite
+is **structure-preserving**: replacements are applied to JSON string values and the
+`model` field only. Tool calls, function calls, streaming options, and every other
+field pass through byte-identical, so `assistant(tool_calls)` →
+`tool(tool_call_id)` sequences survive untouched to the backend.
+
+## Fail-open options (opt-in escape hatches)
+
+The gateway is **fail-closed by default**: a scanner exception or missing
+configuration blocks the request rather than forwarding it unguarded. For teams
+that must prioritize availability over safety in specific situations, Settings
+-> **Fail-open Options** exposes three admin toggles, **all default OFF**:
+
+| Toggle | When ON |
+|---|---|
+| Scanner exceptions | A prompt-scanner exception allows the request with an audit entry instead of blocking it |
+| Response-scan exceptions | A response-scanner exception forwards the response unscanned (never cached) |
+| Compression gate | If the semantic gate is unavailable, compression is applied ungated instead of keeping the original (a below-threshold drift is still rejected) |
+
+Every fail-open event is logged with a warning and audited, so you can always
+see when the safety net was lifted.
+
+<Callout type="info" title="Related">
+- [Semantic intent analysis](/docs/guides/semantic-intent-analysis), scoring traffic by meaning
+- [Create rules with AI](/docs/how-to/create-rules-with-ai), draft rules from an objective
+</Callout>

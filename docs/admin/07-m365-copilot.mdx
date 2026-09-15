@@ -1,0 +1,31 @@
+---
+title: "M365 Copilot admin reference"
+description: "The M365 Copilot page - agent catalog, agent registry, usage analytics, and interaction export with app-only authentication."
+order: 7
+---
+
+The M365 Copilot page manages the Copilot admin surfaces through Microsoft
+Graph with app-only (client-credentials) authentication.
+
+- **Connection**: enable the bridge and enter Tenant ID / Client ID / Client
+  Secret; **Test connection** acquires an app-only token and lists the agent
+  catalog to prove the application permissions work.
+- **Agent catalog (packages)**: live inventory of agents in the organization
+  with per-agent details (name, type, platform, hosts, publisher, version,
+  blocked state, deployment).
+- **Agent registry**: create, view, update, and delete agent registrations,
+  including syncing agents registered on AI-FW with M365 (Beta endpoint).
+- **Usage analytics**: per-user activity, user-count summaries, and daily
+  user-count trends for D7 / D30 / D90 / D180.
+- **Interaction export**: export a user's Copilot prompt and response history.
+
+Every mutation and report load is audited, fail-closed on Graph errors, and the
+client secret is masked. Mock Graph is honored only in non-production
+environments.
+
+See [M365 Copilot admin & agent sync](/docs/tutorials/m365-copilot-bridge).
+
+<Callout type="info" title="Related">
+- [M365 Copilot admin & agent sync](/docs/tutorials/m365-copilot-bridge)
+- [Identity & access](/docs/guides/identity-access)
+</Callout>

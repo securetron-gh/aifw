@@ -1,0 +1,78 @@
+---
+title: "Risk profiles & auto-block"
+description: "Rolling risk scores for users, agents, and IPs, with automatic blocking, category risk cards, and a metadata-only audit trail."
+order: 5
+---
+
+AI-FW tracks **risk** per identity, users, agents, and source IPs, so risky
+behavior escalates automatically and can block traffic before it causes damage.
+
+## How risk scores work
+
+- Risk increases with **violations** (blocked requests, denied authorizations,
+  failed tasks, CA errors) and with **semantic flags**.
+- Scores **decay over time** (48-hour exponential decay, capped at 100) so a past
+  mistake doesn't permanently label an identity.
+- **Only verified identities drive escalation**: a token claim (`sub`) escalates;
+  client-supplied headers are never trusted for risk. The UI shows an **Identity**
+  badge, Verified (token claim) vs Header (client-supplied).
+
+## Three risk surfaces
+
+| Surface | What it shows |
+|---|---|
+| **User risk leaderboard** | Risk score, semantic flags + blocks, violation count, first/last seen, per-user reset, and a drill-down into recent transactions. |
+| **Risky agents** | Agent risk scores (block violations only, agent IDs are client-controlled, so semantic flags stay excluded), requests, violations, band, reset. |
+| **Risky IP addresses** | Per-source-IP risk, created automatically on **blocks and semantic flags** (the least spoofable signal), with drill-down showing which users/agents came from that IP. |
+
+Summary cards show Total Users, New AI Users, High-Risk Users, and Semantic Flags.
+
+## Category risk cards
+
+Risk is also broken down by category, each with all-time and 7-day detections,
+last-detected time, top entities, and the most recent transactions:
+
+- **Semantic Risk Analysis**, blocks vs flags per semantic rule
+- **PII Risk**, SSNs, emails, API keys in traffic
+- **PCI (Card) Risk**, payment card numbers
+- **Health Data Risk**, medical terms and identifiers
+
+<Callout type="warning" title="Health detection is a heuristic">
+Health-data detection is a keyword/identifier heuristic for visibility, not a
+compliance attestation. Treat it as a signal, not a certification.
+</Callout>
+
+## Risk auto-block
+
+The **Risk Auto-Block** card adds a count-based guard on top of score-based
+blocking: an identity that accumulates **N violations within a rolling window of T
+seconds** is automatically blocked for a cooldown period.
+
+| Setting | Default |
+|---|---|
+| Master switch | on |
+| Violations (N) | 5 |
+| Window (T, seconds) | 300 |
+| Block duration (seconds) | 3600 |
+
+- When the block fires, an **alert is written to the audit log** with the
+  identity, violation count, and window.
+- While blocked, the orchestrator rejects the identity's tasks.
+- Violations older than the window drop out of the count; the switch fully
+  disables the guard.
+- Score-based thresholds are unchanged: requires-auth at 10, block at 50, with a
+  1-hour cooldown.
+
+## Audit trail
+
+Every transaction lands in the **audit log** with metadata only: model, identity,
+source IP, latency, decision, and truncated previews (raw content is never
+persisted). The Activity log previews real streamed content as it flows, and the
+**Events** tab records configuration and security changes, 
+including `risk_auto_blocked` alerts, so you always know who changed what, and
+when.
+
+<Callout type="info" title="Related">
+- [Semantic intent analysis](/docs/guides/semantic-intent-analysis), flags that feed risk scores
+- [Identity & access](/docs/guides/identity-access), verified vs header identities
+</Callout>

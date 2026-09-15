@@ -1,0 +1,27 @@
+---
+title: "Agent API keys reference"
+description: "The Agent API Keys page - add, generate, label, and revoke keys with hashed storage and per-key identity."
+order: 9
+---
+
+The Agent API Keys page manages admin-issued keys that agents and tools send as
+`Authorization: Bearer <key>` or `x-api-key`.
+
+- **Add or Generate** - paste an existing key or generate a new one, with an
+  optional label.
+- **Revoke** - immediate, no waiting.
+- Keys are stored as **SHA-256 hashes only**, never plaintext.
+- Behavior per authentication mode: enforced in `required`, validated in
+  `optional`, not checked in `passthrough`.
+- Keys authenticate the caller and are **not** forwarded upstream (use key mode
+  `model` for registered-model keys).
+- Audit and risk identity is the key's unique registry id, displayed as
+  `label (id)` on the Audit Logs page.
+- Each key gets its own completion-cache namespace.
+
+See [Admin-issued API keys](/docs/guides/agent-api-keys).
+
+<Callout type="info" title="Related">
+- [Admin-issued API keys](/docs/guides/agent-api-keys)
+- [Identity & access](/docs/guides/identity-access)
+</Callout>

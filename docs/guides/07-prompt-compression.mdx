@@ -1,0 +1,56 @@
+---
+title: "Prompt compression"
+description: "Cut upstream token spend with semantic-gated prompt compression, rule, aggressive, and LLM tiers that never change the meaning."
+order: 7
+---
+
+**Prompt compression** reduces upstream token spend by removing filler and
+politeness from prompts before they are forwarded to the model. Every rewrite is
+guarded by a **semantic safety gate**, so the meaning never changes, if the gate
+cannot confirm the rewrite, the original prompt is sent unchanged.
+
+## How it works
+
+Compression runs on the request body before forwarding, per message (chat
+completions and `/v1/messages`). Three tiers are available:
+
+| Tier | What it does | Default |
+|---|---|---|
+| **Rule tier** | Strips a curated filler list (politeness, hedges, and filler like "please", "kindly", "i was wondering if", "basically") at word boundaries, collapses whitespace, cleans punctuation, normalizes the first letter. Content words are never touched. | On |
+| **Aggressive tier** | Adds articles (a/an/the, never before quantity words like "a few"), `and` to comma (never between numbers, so "one hundred and fifty" is preserved), and semicolon/colon to comma between words (times like "10:30" and URL ports are untouched). | Opt-in |
+| **LLM tier** | When a compressor model is configured, the prompt is rewritten by that model with a strict 16K-character cap and temperature 0. Any failure, timeout, or gate rejection degrades to the gated rule result, never a worse prompt. | Optional |
+
+## The semantic safety gate
+
+Compression is only applied when it is safe to do so:
+
+- The compressed text is embedded and compared against the original with cosine
+  similarity; the rewrite must meet the configured threshold (**default 0.92**).
+- If the score falls below the threshold, or the gate is unavailable, the
+  **original is kept** (fail-closed).
+- Savings must also exceed the configured minimum (**default 5%**) or the rewrite
+  is skipped entirely.
+- The aggressive tier is gated with its own slightly lower threshold (default
+  0.85), because removing articles lowers embedding similarity; if rejected, it
+  degrades to the filler-only result.
+
+## Observability
+
+Every applied compression is recorded in the transaction log with the mode used
+(rule or LLM) and the estimated tokens saved. The dashboard shows a **Tokens
+saved (24h)** total, so you can see exactly what the feature is returning.
+
+## Configuration
+
+- **Settings -> Prompt Compression**: global toggle (off by default), similarity
+  threshold, minimum savings, the aggressive-rules toggle, and an optional
+  compressor model.
+- **Model Inventory**: per-model override (inherit / on / off), so compression can
+  be enabled or disabled for individual models.
+- **Scope**: chat and `/v1/messages` only. Embeddings input is never compressed -
+  the vectors would change.
+
+<Callout type="info" title="Related">
+- [Reliability & caching](/docs/guides/reliability-caching), the other cost lever: cache hits skip upstream calls entirely
+- [Semantic intent analysis](/docs/guides/semantic-intent-analysis), the same embedding machinery that powers the safety gate
+</Callout>

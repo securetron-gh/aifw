@@ -1,0 +1,82 @@
+---
+title: "Claude Code, Cursor & MCP tools"
+description: "Route Claude-native clients, Cursor, and MCP tools through the gateway, Anthropic protocol support, facades, and the MCP compliance interface."
+order: 2
+---
+
+The gateway speaks **both** the OpenAI chat-completions protocol and the
+**Anthropic Messages protocol**, so Claude-native clients get the same rules,
+semantic tier, key precedence, streaming, and audit logging as OpenAI-compatible
+clients.
+
+## Endpoints at a glance
+
+| Client protocol | Gateway endpoint | Examples |
+|---|---|---|
+| OpenAI `chat/completions` | `POST /v1/chat/completions` | OpenAI SDKs, Cline, VS Code, Copilot |
+| Anthropic `messages` | `POST /v1/messages` | Claude Code, Claude CoWork, Claude Desktop |
+
+Each registered model carries a protocol (`openai` or `anthropic`); `claude-*`
+model IDs default to Anthropic automatically.
+
+## Claude Code / CoWork
+
+Point the client at the gateway with its base URL, no other client change:
+
+```bash
+export ANTHROPIC_BASE_URL=http://<gateway-host>:443
+export ANTHROPIC_AUTH_TOKEN=<your-gateway-token>   # optional; see auth modes
+```
+
+Claude sends `POST /v1/messages` with `x-api-key` (console key) or
+`Authorization: Bearer` (OAuth). The gateway accepts both, relays to the registered
+Claude model's backend, and applies the resolved key and rules.
+
+## Cursor / Cline / VS Code
+
+Set the OpenAI base URL to `http://<gateway-host>:443/v1` and pick a registered
+model. Because the gateway can route `claude-*` models behind an OpenAI-style
+client (and vice-versa), you can use Claude models from OpenAI-style editors and
+OpenAI models from Anthropic-style clients.
+
+## Protocol facades
+
+The gateway translates between the two protocols:
+
+- **OpenAI client → Claude backend**: the request is translated to the Anthropic
+  Messages schema (system, messages, tools → `input_schema`) and the response/SSE
+  translated back to the OpenAI shape. `temperature` is clamped to 0–1, and
+  `system`/`developer` messages are hoisted into the initial system message.
+- **Anthropic client → OpenAI backend**: the Messages request is translated to
+  `chat/completions` and the response/SSE back to Messages events.
+
+Both directions run through the same inspection pipeline, rule enforcement and
+the semantic tier are protocol-agnostic. Streaming works on both endpoints, with
+`content_block_delta` frames scanned token-by-token; a mid-stream violation
+terminates the SSE stream with a `guardrail_violation` event.
+
+## MCP tools
+
+The gateway exposes its **compliance tooling over MCP** so MCP-enabled agents can
+call it directly:
+
+- `initialize`, protocol handshake
+- `list tools`, discover available compliance tools
+- `check prompt`, send a prompt for inspection *before* it goes to a model, and
+  act on the verdict
+
+Verdicts are machine-actionable: `allow`, `deny`, `flag`, or `mask`, so an agent
+can self-police before a single token is spent. Each verdict includes the matched
+policy and (for denies) the reason.
+
+## Verify it works
+
+- `POST /v1/messages` with a `claude-*` model → the gateway relays to the
+  Claude backend.
+- Ask for a model with the wrong protocol → the facade translates transparently.
+- Send a jailbreak attempt through either protocol → `400 guardrail_violation`.
+
+<Callout type="info" title="Related">
+- [API reference, Anthropic Messages](/docs/api-reference/anthropic-messages-api)
+- [Quick start](/docs/getting-started/quick-start)
+</Callout>

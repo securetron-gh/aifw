@@ -1,0 +1,54 @@
+# AIFW (AI-FW) by Securetron - local stack
+#
+#   docker compose up -d                  start the gateway and its database
+#   docker compose logs -f aifw           follow gateway logs
+#   docker compose down                   stop (keeps the database volume)
+#   docker compose down -v                stop and delete the database volume
+#
+# Gateway UI:  http://localhost:8080      default login: superadmin / happy
+# Health:      http://localhost:8080/api/health   (also /ready)
+#
+# Pin a published version instead of latest:
+#   AIFW_TAG=1.1.245 docker compose up -d
+#
+# Override before using this anywhere beyond your own machine:
+#   AIFW_JWT_SECRET, POSTGRES_PASSWORD
+
+services:
+  aifw:
+    image: ghcr.io/securetron-gh/aifw:${AIFW_TAG:-latest}
+    ports:
+      # The gateway listens on 80 (HTTP) and 443 (HTTPS). Container port is 80.
+      - "${AIFW_PORT:-8080}:80"
+      # HTTPS listener; needs certificates configured, so leave closed by default.
+      # - "8443:443"
+    environment:
+      # Names use ASP.NET Core's double-underscore convention.
+      ConnectionStrings__PostgreSQL: "Host=aifw-db;Port=5432;Database=pki_remote_agent;Username=postgres;Password=${POSTGRES_PASSWORD:-Password123!}"
+      AiFw__JwtSecret: "${AIFW_JWT_SECRET:-local-dev-only-change-me}"
+      # Front a real model provider:
+      # AiFw__Llm__BackendApiKey: "${AIFW_LLM_BACKEND_API_KEY:-}"
+      # AiFw__Llm__BackendUrl: "https://api.openai.com/v1"
+    depends_on:
+      aifw-db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  aifw-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Password123!}
+      POSTGRES_DB: pki_remote_agent
+    volumes:
+      - aifw-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d pki_remote_agent"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  aifw-pgdata:

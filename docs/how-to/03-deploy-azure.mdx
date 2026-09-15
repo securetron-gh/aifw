@@ -1,0 +1,99 @@
+---
+title: "Deploy on Azure Container Apps"
+description: "A production-shaped deployment recipe, PostgreSQL, the gateway container, secrets, environment configuration, and health checks."
+order: 3
+---
+
+This recipe deploys the AI-FW gateway to **Azure Container Apps** with
+PostgreSQL Flexible Server as the backing store.
+
+<Callout type="info" title="Prerequisites">
+Azure CLI installed and authenticated, a resource group, and a container
+registry (ACR) holding your gateway image.
+</Callout>
+
+## 1. Provision PostgreSQL
+
+Create a PostgreSQL Flexible Server with TLS required:
+
+| Setting | Recommended |
+|---|---|
+| Tier | Burstable (e.g. `Standard_B1ms`) for evaluation; scale up for production |
+| Storage | 32 GiB minimum |
+| Backup retention | 7 days; geo-backup and high availability per your DR policy |
+| Network | Private network for production; allow Azure services for simplest connectivity |
+| Firewall | Only the services that must connect |
+
+<Callout type="danger" title="Never put the password in source or logs">
+Store the connection string, including the password, as a container-app secret,
+never in the image, pipeline output, or repository.
+</Callout>
+
+## 2. Push the gateway image
+
+Build the gateway container and push it to your registry with a unique tag (for
+example, your CI build ID). The container listens on the configured HTTP port
+(`443` in the example below).
+
+## 3. Create the Container App
+
+Create the app with **external HTTPS ingress** to the gateway's HTTP port:
+
+```bash
+az containerapp create \
+  --resource-group <rg> \
+  --environment <env> \
+  --name AI-FW-gateway \
+  --image <registry>/<gateway-image>:<tag> \
+  --ingress external \
+  --target-port 443 \
+  --min-replicas 1 --max-replicas 1 \
+  --secrets postgres-connection=<secret-conn-string> jwt-secret=<secret> \
+  --env-vars \
+    ASPNETCORE_ENVIRONMENT=Production \
+    ASPNETCORE_HTTP_PORTS=443 \
+    ConnectionStrings__PostgreSQL=secretref:postgres-connection \
+    AiFw__JwtSecret=secretref:jwt-secret
+```
+
+Notes:
+
+- **Secrets** are referenced with `secretref:` and are never visible in app
+  configuration dumps.
+- The **JWT secret** signs tokens for API-key and JWT authentication, generate a
+  strong random value and rotate it deliberately.
+- Set **fail-closed** configuration (`AiFw__FailClosed=true`) to keep the
+  gateway's deny-by-default posture in production.
+
+## 4. Configure the admin account
+
+Right after first deployment, sign in and **change the bootstrap administrator
+password** (User Management), then create your own admin users. If you use SSO,
+configure OIDC now and switch the sign-in mode.
+
+<Callout type="warning" title="Lock down ingress for production">
+For production, restrict ingress with an IP allow-list or a private network, 
+exposing the admin UI to the public internet is only acceptable for short-lived
+evaluations.
+</Callout>
+
+## 5. Verify health
+
+1. Wait for the newest revision to become healthy.
+2. Read the generated FQDN.
+3. Call `https://<fqdn>/api/health`, expect `200`.
+4. Call `https://<fqdn>/ready`, expect `200` (this is the readiness probe used by
+   the platform).
+5. Confirm the running image matches the tag you pushed.
+
+## 6. Optional: enable agent mTLS
+
+Application-level **mTLS** (client certificates for agents) is configured through
+the gateway's TLS settings. In a Container Apps deployment, enabling raw TCP
+ingress and custom hostnames gives you full control over the certificate
+lifecycle, a follow-up iteration after the initial HTTPS-only deployment.
+
+<Callout type="info" title="Related">
+- [Quick start](/docs/getting-started/quick-start), local evaluation first
+- [Identity & access](/docs/guides/identity-access), admin roles and SSO after deployment
+</Callout>
