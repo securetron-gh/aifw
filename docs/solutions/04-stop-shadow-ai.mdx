@@ -2,6 +2,11 @@
 title: "Find and stop shadow AI usage"
 description: "Discover unregistered models and ungoverned clients, then close the gap with a strict model registry, per-identity policy and a record of every attempt."
 order: 4
+faqs:
+  - q: "Will strict model registration break approved traffic?"
+    a: "No. Registered models continue to serve normally. Only requests for unregistered models are refused, and each one is attributed to an identity so you can act on it."
+  - q: "How do we onboard a model a team is already using?"
+    a: "Register it with its provider and key, then let it route under policy. The goal is adoption through an approved path rather than a permanent block."
 ---
 
 Shadow AI rarely looks like rebellion. It looks like a team that needed an answer, had a company card, and signed up for a model API. The traffic exists; the governance does not. The first step is making it visible, and the second is deciding what to do about it.
@@ -32,6 +37,16 @@ Shadow AI rarely looks like rebellion. It looks like a team that needed an answe
 - [Shadow AI](/product/shadow-ai)
 - [Model routing & registry](/docs/guides/model-routing)
 - [Risk profiles & auto-block](/docs/guides/risk-profiles)
+
+## Frequently asked questions
+
+**Will strict model registration break approved traffic?**
+
+No. Registered models continue to serve normally. Only requests for unregistered models are refused, and each one is attributed to an identity so you can act on it.
+
+**How do we onboard a model a team is already using?**
+
+Register it with its provider and key, then let it route under policy. The goal is adoption through an approved path rather than a permanent block.
 
 <Callout type="info" title="Onboarding both ways">
 The [self-hosted buyer's checklist](/comparison/self-hosted-ai-gateway) covers what to look for in the discovery controls, and [Configure models & keys](/docs/how-to/configure-models-keys) walks through registering them.

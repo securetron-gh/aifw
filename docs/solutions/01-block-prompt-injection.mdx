@@ -2,6 +2,11 @@
 title: "Block prompt injection in production"
 description: "How to detect and block prompt injection and jailbreak attempts before they reach a model provider, using rule ordering, semantic scoring and fail-closed inspection."
 order: 1
+faqs:
+  - q: "Do keyword rules alone stop prompt injection?"
+    a: "No. Rules catch known patterns; semantic scoring catches rephrasing. Use both, with deny winning over accept so a specific block cannot be softened later in the chain."
+  - q: "What happens if inspection fails?"
+    a: "With the fail-closed default the request is refused rather than forwarded unscanned, so a scanner problem cannot silently bypass policy."
 ---
 
 Prompt injection is not a content problem you can solve with a blocked word list. Attackers rephrase, encode, split the payload across messages, and hide instructions in retrieved documents. What you need is a decision made before the request leaves your network, with a record of what was decided.
@@ -33,6 +38,16 @@ Prompt injection is not a content problem you can solve with a blocked word list
 - [Prompt & response guardrails](/docs/guides/prompt-response-guardrails)
 - [Semantic intent analysis](/docs/guides/semantic-intent-analysis)
 - [Create rules with AI assistance](/docs/how-to/create-rules-with-ai)
+
+## Frequently asked questions
+
+**Do keyword rules alone stop prompt injection?**
+
+No. Rules catch known patterns; semantic scoring catches rephrasing. Use both, with deny winning over accept so a specific block cannot be softened later in the chain.
+
+**What happens if inspection fails?**
+
+With the fail-closed default the request is refused rather than forwarded unscanned, so a scanner problem cannot silently bypass policy.
 
 <Callout type="info" title="Want it validated in your environment?">
 Ask for the Technical Plan: a step-by-step proof of concept you run against your own prompts, so you can measure detection and false positives before rolling out.

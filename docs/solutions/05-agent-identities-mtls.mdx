@@ -2,6 +2,11 @@
 title: "Give agents real identities with mTLS"
 description: "Issue certificates to agents through a CSR enrollment flow, then authorize every model call against that identity instead of a shared API key."
 order: 5
+faqs:
+  - q: "Does an agent's private key leave the agent?"
+    a: "No. The agent generates the key pair and presents only a certificate signing request, so the private key never leaves the agent."
+  - q: "How do we revoke a single agent?"
+    a: "Revoke its certificate. Other agents keep working, with no shared secret that has to be rotated across the fleet."
 ---
 
 An API key proves that someone holds a string. It does not say which agent is calling, whether that agent is still supposed to exist, or how to revoke it without rotating a credential every other workload shares. Agents that act autonomously need the same trust model you already use for servers.
@@ -33,6 +38,16 @@ An API key proves that someone holds a string. It does not say which agent is ca
 - [Agent self-enrollment tutorial](/docs/tutorials/agent-self-enrollment)
 - [Identity & access](/docs/guides/identity-access)
 - [CA integrations](/docs/admin/ca-integrations)
+
+## Frequently asked questions
+
+**Does an agent's private key leave the agent?**
+
+No. The agent generates the key pair and presents only a certificate signing request, so the private key never leaves the agent.
+
+**How do we revoke a single agent?**
+
+Revoke its certificate. Other agents keep working, with no shared secret that has to be rotated across the fleet.
 
 <Callout type="info" title="Identity is the differentiator">
 Treating agents as identities rather than clients is what makes agent-to-agent work provable. See [AI gateway vs AI firewall](/comparison/ai-gateway-vs-ai-firewall).

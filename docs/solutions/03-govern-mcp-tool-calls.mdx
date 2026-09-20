@@ -2,6 +2,11 @@
 title: "Govern MCP tool calls by identity"
 description: "Decide which MCP tools an agent may call, with what arguments, and under whose identity, and keep an auditable record of every tool invocation."
 order: 3
+faqs:
+  - q: "Can we allow a tool for one agent group only?"
+    a: "Yes. Tool policy attaches to identities and groups, so a support agent and a finance agent can have different tool sets without a per-client allowlist."
+  - q: "Are tool arguments inspected?"
+    a: "Yes. A tool call passes through the same inspection as any other request, so content cannot be smuggled past the guardrails through a tool invocation."
 ---
 
 A tool call is not a message. It changes state: it files a ticket, edits a record, sends a message, runs a query. Once agents can call tools, the question stops being "what did the model say" and becomes "what was permitted to happen, on whose authority".
@@ -32,6 +37,16 @@ A tool call is not a message. It changes state: it files a ticket, edits a recor
 - [MCP tools](/product/mcp-tools)
 - [Agents reference](/docs/admin/agents)
 - [A2A agent protocol](/docs/api-reference/a2a-agent-protocol)
+
+## Frequently asked questions
+
+**Can we allow a tool for one agent group only?**
+
+Yes. Tool policy attaches to identities and groups, so a support agent and a finance agent can have different tool sets without a per-client allowlist.
+
+**Are tool arguments inspected?**
+
+Yes. A tool call passes through the same inspection as any other request, so content cannot be smuggled past the guardrails through a tool invocation.
 
 <Callout type="info" title="Extending coverage beyond chat">
 Coding agents, MCP tools and Microsoft 365 Copilot can all sit behind one policy engine. See [Governing the AI surfaces beyond chat](/comparison/governing-agent-surfaces).

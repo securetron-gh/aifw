@@ -2,6 +2,11 @@
 title: "Cut LLM token costs without a safety hole"
 description: "Reduce token spend with semantic-gated prompt compression and inspection-gated caching, without letting cost controls bypass guardrails."
 order: 6
+faqs:
+  - q: "Can a cached answer bypass inspection?"
+    a: "No. Blocked or flagged content never enters the cache, and cached answers are evaluated against the identity making the request, so a hit cannot cross a boundary."
+  - q: "What happens when compression cannot be verified?"
+    a: "The original prompt is sent. Compression applies only when the semantic gate confirms the meaning survived."
 ---
 
 Token spend grows quietly: more teams, longer prompts, retries, and the same question asked five times because nobody cached the answer. The easy savings are the dangerous ones - caching a response that should have been blocked, or compressing a prompt until its meaning changes.
@@ -33,6 +38,16 @@ Token spend grows quietly: more teams, longer prompts, retries, and the same que
 - [Reliability & caching](/docs/guides/reliability-caching)
 - [Prompt compression](/docs/guides/prompt-compression)
 - [Completion cache](/product/caching)
+
+## Frequently asked questions
+
+**Can a cached answer bypass inspection?**
+
+No. Blocked or flagged content never enters the cache, and cached answers are evaluated against the identity making the request, so a hit cannot cross a boundary.
+
+**What happens when compression cannot be verified?**
+
+The original prompt is sent. Compression applies only when the semantic gate confirms the meaning survived.
 
 <Callout type="info" title="Measure before you commit">
 The Community Edition includes caching, compression and the dashboard, with a published token allowance - enough to measure real savings before a commercial agreement.

@@ -2,6 +2,11 @@
 title: "Mask PII before prompts leave your network"
 description: "Detect and mask personal data in prompts before they reach a model provider, while keeping the answer usable and the audit record content-free."
 order: 2
+faqs:
+  - q: "Does masking break the answer?"
+    a: "No. Values are replaced in place and the request structure is preserved, so the model answers normally with placeholders where the sensitive values were."
+  - q: "Is the original value stored for audit?"
+    a: "No. The transaction records that masking applied and which categories fired. Raw prompt content is not persisted."
 ---
 
 Most teams discover they are sending personal data to a model provider during a privacy review, not before it. Blocking every request is rarely acceptable, and ignoring it is not either. Masking is the middle path: replace the sensitive values before the request leaves, then let the model work on the redacted text.
@@ -33,6 +38,16 @@ Most teams discover they are sending personal data to a model provider during a 
 - [Prompt & response guardrails](/docs/guides/prompt-response-guardrails)
 - [Audit logs & export](/docs/guides/audit-logs-export)
 - [Identity & access](/docs/guides/identity-access)
+
+## Frequently asked questions
+
+**Does masking break the answer?**
+
+No. Values are replaced in place and the request structure is preserved, so the model answers normally with placeholders where the sensitive values were.
+
+**Is the original value stored for audit?**
+
+No. The transaction records that masking applied and which categories fired. Raw prompt content is not persisted.
 
 <Callout type="info" title="Data residency questions?">
 Inspection and masking run locally, so no third-party service sees your prompts. See [Data residency for AI traffic](/comparison/ai-data-residency) for the questions to put in an RFP.
