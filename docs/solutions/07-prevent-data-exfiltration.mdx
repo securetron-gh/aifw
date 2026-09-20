@@ -1,0 +1,68 @@
+---
+title: "Stop data leaving through prompts and responses"
+description: "Block sensitive data on the outbound path, so prompts, credentials and system instructions cannot leave your network toward a model provider."
+order: 7
+faqs:
+  - q: "Is this the same as a network DLP tool?"
+    a: "No. A network DLP tool looks at traffic it can recognise as a data flow. AI traffic is different: the payload is prose. Sensitive values arrive as sentences, tables or tool arguments, so inspection has to understand categories and intent rather than match a file signature. The two are complementary, and the gateway covers the path a network tool cannot read."
+  - q: "Will blocking break legitimate workflows?"
+    a: "Start with mask for the categories you can tolerate redacted, and block only what must never leave: credentials, private keys, system prompts, bulk identifier exports. Because deny wins over accept, you can keep a broad rule set while making the few hard rules absolute."
+  - q: "What about content that has already left?"
+    a: "You cannot recall a prompt once a provider has it. What you can do is make the leak visible: the transaction record shows which identity sent what category of data to which endpoint and when, which is the evidence an incident response needs. That record holds metadata, not the content itself."
+---
+
+An AI assistant is a data path nobody drew on the architecture diagram. It reads what your people paste into it, it can fetch what your tools expose, and it answers in prose that is easy to copy somewhere it should not go. Data loss prevention for AI is the discipline of putting a checkpoint on that path and recording what crossed it.
+
+## The short answer
+
+- **Inspect the outbound path.** Almost all AI data loss is egress: a model that echoes a system prompt, a summary that carries identifiers onward, a key pasted into a chat window.
+- **Treat prose as data.** Sensitive values arrive inside sentences and tool arguments, so category detection has to run on content, not on file signatures.
+- **Separate the two questions.** What must never leave gets blocked. What may leave in redacted form gets masked. What you only want to see gets logged.
+- **Name the destination.** An unapproved endpoint is a data loss incident in progress, so the allow list is part of the control, not a separate one.
+- **Record the decision, not the content.** The audit trail should prove what happened without becoming a new store of the data you were protecting.
+
+## How to do it in AI-FW
+
+1. **Enable outbound inspection.** Response inspection covers what a model returns, including leaked system prompts, internal hostnames and addresses, credentials and private keys. Inbound inspection covers what your users and agents send.
+2. **Set the action per rule.** `block` refuses the request or the response, `mask` replaces the value in place, `log` records it without intervening. Deny wins over accept, so a broad allow rule cannot override a specific block.
+3. **Cover the categories that matter to you.** Built-in detection covers personal data, card data, health data and credential patterns. Custom rules handle your own identifiers: employee numbers, case references, internal project codes, account structures.
+4. **Constrain the destination.** Register the models and endpoints you approve. Traffic to anything outside the inventory is blocked rather than reported after the fact.
+5. **Scope by identity.** An agent summarizing public documentation and an agent working inside customer records can carry different policies for the same category, keyed to their registered identity.
+6. **Export the trail where you already monitor.** Log exports go to your SIEM over TLS or through the audit API, so an egress attempt lands in the same queue as your other security events.
+
+## Verify it works
+
+- Send a prompt containing a test credential pattern and confirm it is blocked and the block is recorded.
+- Ask a model to repeat its instructions and confirm the attempt is caught on the outbound path.
+- Check the [Audit Logs](/docs/admin/audit-logs) entry for the rule that fired, the identity, the model and the timestamp, and confirm no payload content is stored.
+- Add an unregistered model endpoint to a test request and confirm it is refused.
+- Review [Risk Profiles](/docs/admin/risk-profiles) for the categories that fire most often, which is usually where a workflow needs fixing rather than the policy.
+
+## Where this fits
+
+Egress control is one half of the picture. The other half is minimisation, so that data which never needed to be in the prompt does not reach the boundary at all. Run the two together: mask what you can redact, block what must not cross, and keep the destination list short enough to defend.
+
+## Related
+
+- [Mask PII before prompts leave your network](https://aifw.io/docs/solutions/mask-pii-before-providers)
+- [Prompt & response guardrails](https://aifw.io/docs/guides/prompt-response-guardrails)
+- [Data residency for AI traffic](https://aifw.io/comparison/ai-data-residency)
+- [PCI DSS: keeping card data out of the AI path](https://aifw.io/compliance/pci-dss)
+
+## Frequently asked questions
+
+**Is this the same as a network DLP tool?**
+
+No. A network DLP tool looks at traffic it can recognise as a data flow. AI traffic is different: the payload is prose. Sensitive values arrive as sentences, tables or tool arguments, so inspection has to understand categories and intent rather than match a file signature. The two are complementary, and the gateway covers the path a network tool cannot read.
+
+**Will blocking break legitimate workflows?**
+
+Start with mask for the categories you can tolerate redacted, and block only what must never leave: credentials, private keys, system prompts, bulk identifier exports. Because deny wins over accept, you can keep a broad rule set while making the few hard rules absolute.
+
+**What about content that has already left?**
+
+You cannot recall a prompt once a provider has it. What you can do is make the leak visible: the transaction record shows which identity sent what category of data to which endpoint and when, which is the evidence an incident response needs. That record holds metadata, not the content itself.
+
+<Callout type="info" title="Testing an egress policy?">
+The highest-value first test is the boring one: ask a model to repeat its instructions, and confirm the attempt is caught and attributed. See [Identity & access](https://aifw.io/docs/guides/identity-access) for making sure that attribution names an agent rather than a shared key.
+</Callout>

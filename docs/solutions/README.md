@@ -8,5 +8,6 @@ Problem-first recipes. [Index](../README.md) · [Prev: Guides](../guides/README.
 4. [Find and stop shadow AI usage](04-stop-shadow-ai.mdx) - strict registry, attribution, a legitimate path
 5. [Give agents real identities with mTLS](05-agent-identities-mtls.mdx) - CSR enrollment, revocation by identity
 6. [Cut LLM token costs without a safety hole](06-cut-token-costs-safely.mdx) - gated caching and compression
+7. [Stop data leaving through prompts and responses](07-prevent-data-exfiltration.mdx) - egress control, destination allow list, incident evidence
 
 Rendered: https://aifw.io/docs/solutions/block-prompt-injection
