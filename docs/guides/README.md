@@ -1,6 +1,6 @@
 # Guides
 
-Deep dives into each capability. [Index](../README.md) · [Prev: Getting Started](../getting-started/README.md) · [Next: Tutorials](../tutorials/README.md)
+Deep dives into each capability. [Index](../README.md) · [Prev: Getting Started](../getting-started/README.md) · [Next: Solutions](../solutions/README.md)
 
 1. [Prompt & response guardrails](01-prompt-response-guardrails.mdx) - built-in and custom rules, evaluation order, fail-open options
 2. [Model routing & registry](02-model-routing.mdx) - default model, strict mode, conditional rules

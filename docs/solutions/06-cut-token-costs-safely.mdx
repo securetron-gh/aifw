@@ -1,0 +1,39 @@
+---
+title: "Cut LLM token costs without a safety hole"
+description: "Reduce token spend with semantic-gated prompt compression and inspection-gated caching, without letting cost controls bypass guardrails."
+order: 6
+---
+
+Token spend grows quietly: more teams, longer prompts, retries, and the same question asked five times because nobody cached the answer. The easy savings are the dangerous ones - caching a response that should have been blocked, or compressing a prompt until its meaning changes.
+
+## The short answer
+
+- Compress **only when a semantic gate confirms** the meaning survived; otherwise send the original.
+- Cache **only content that passed inspection**, with keys scoped by identity so answers cannot leak between callers.
+- Never cache streams or flagged content.
+- Measure savings per model, not as one blended number, so you can see which change is actually paying.
+
+## How to do it in AI-FW
+
+1. **Turn on the completion cache.** Exact matches are served without an upstream call; near-duplicates are matched semantically. Cache keys are identity-salted and scoped per agent, group, model or globally, first match wins.
+2. **Keep inspection in front of the cache.** Blocked or policy-violating content is never stored, and cached answers are re-checked against the identity that is asking, so a hit cannot cross a boundary.
+3. **Enable prompt compression.** Long prompts are compressed under a gate: the compressed version is scored against the original, and it is used only when meaning is preserved. If the gate cannot run, the original is kept - fail closed, as usual.
+4. **Watch the gate budget.** On very large prompts the gate runs within a per-request budget. When it is exhausted, remaining segments are left untouched, which keeps latency and embedding cost bounded.
+5. **Route by cost as well as capability.** Send routine workloads to a cheaper model, keep regulated data on an approved provider, and express both as routing rules rather than tribal knowledge.
+
+## Verify it works
+
+- Compare tokens billed across a week with cache and compression off, then on, for the same workload.
+- Confirm no blocked response ever appears as a cache hit.
+- Spot-check compressed prompts for a few workloads: the answers should be equivalent, and any rejected gate should leave the original text in place.
+- Review the cost model in [Total cost of ownership](/comparison/ai-gateway-tco) for the four lines that decide payback.
+
+## Related
+
+- [Reliability & caching](/docs/guides/reliability-caching)
+- [Prompt compression](/docs/guides/prompt-compression)
+- [Completion cache](/product/caching)
+
+<Callout type="info" title="Measure before you commit">
+The Community Edition includes caching, compression and the dashboard, with a published token allowance - enough to measure real savings before a commercial agreement.
+</Callout>

@@ -7,11 +7,12 @@ The AI-FW documentation, organized by section. The rendered version lives at
 
 1. [Getting Started](getting-started/README.md) - what AI-FW is, and the quick start
 2. [Guides](guides/README.md) - deep dives into each capability
-3. [Tutorials](tutorials/README.md) - hands-on walkthroughs
-4. [How-To](how-to/README.md) - focused recipes for admin tasks
-5. [API Reference](api-reference/README.md) - endpoints and protocols
-6. [Admin Reference](admin/README.md) - every admin page and its options
-7. [Community Edition](community-edition/README.md) - the free edition license and monthly token allowance
+3. [Solutions](solutions/README.md) - problem-first recipes for common AI governance tasks
+4. [Tutorials](tutorials/README.md) - hands-on walkthroughs
+5. [How-To](how-to/README.md) - focused recipes for admin tasks
+6. [API Reference](api-reference/README.md) - endpoints and protocols
+7. [Admin Reference](admin/README.md) - every admin page and its options
+8. [Community Edition](community-edition/README.md) - the free edition license and monthly token allowance
 
 ## Editing
 

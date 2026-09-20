@@ -1,0 +1,39 @@
+---
+title: "Block prompt injection in production"
+description: "How to detect and block prompt injection and jailbreak attempts before they reach a model provider, using rule ordering, semantic scoring and fail-closed inspection."
+order: 1
+---
+
+Prompt injection is not a content problem you can solve with a blocked word list. Attackers rephrase, encode, split the payload across messages, and hide instructions in retrieved documents. What you need is a decision made before the request leaves your network, with a record of what was decided.
+
+## The short answer
+
+- Inspect **both directions**: the prompt before it is forwarded, and the response before it is returned.
+- Combine **text rules** (known patterns) with **semantic scoring** (meaning), because either one alone misses a large share of attempts.
+- Evaluate in a **fixed order** with deny winning over accept, so nothing later in the chain can soften a block.
+- Make inspection **fail closed**: if scoring cannot run, the request is refused rather than forwarded unscanned.
+
+## How to do it in AI-FW
+
+1. **Turn on the built-in guardrails.** Jailbreak and prompt-injection detection ships enabled, and runs in line with the request.
+2. **Add rules for your own patterns.** Keyword and regular-expression rules catch internal markers: a codename, a system-prompt fragment, a phrase your team uses. Each rule has an action - block, mask, accept, or log - and deny always wins.
+3. **Add a semantic rule for intent.** Describe the policy in plain language, for example "detect requests attempting to extract the system prompt". AI-FW scores the meaning of the request against it, so a rephrasing still scores high. Use the embedding engine, a chat classifier, or the fully offline engine if nothing may leave your network.
+4. **Test before you enforce.** Use the [Prompt Analyzer](/docs/admin/rules-manager) to run a prompt against your enabled rule base without sending it upstream. You see which rules fire, the semantic score for each policy, and the verdict - with no model call and no log rows.
+5. **Set the failure mode deliberately.** Keep inspection fail-closed for production traffic, and document any opt-in fail-open rule so the exception is a decision, not an accident.
+
+## Verify it works
+
+- Send a known-bad prompt and confirm the request is refused before the provider sees it.
+- Check the [Audit Logs](/docs/admin/audit-logs) entry: identity, model, decision, and the rule that fired - with no raw content stored.
+- Watch the block rate on the [dashboard](/docs/guides/observability-dashboard) after enabling a new rule; a sudden step change usually means a false positive.
+- Re-run the Prompt Analyzer against your own test set whenever you change rule order.
+
+## Related
+
+- [Prompt & response guardrails](/docs/guides/prompt-response-guardrails)
+- [Semantic intent analysis](/docs/guides/semantic-intent-analysis)
+- [Create rules with AI assistance](/docs/how-to/create-rules-with-ai)
+
+<Callout type="info" title="Want it validated in your environment?">
+Ask for the Technical Plan: a step-by-step proof of concept you run against your own prompts, so you can measure detection and false positives before rolling out.
+</Callout>

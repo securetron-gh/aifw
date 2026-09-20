@@ -1,0 +1,38 @@
+---
+title: "Find and stop shadow AI usage"
+description: "Discover unregistered models and ungoverned clients, then close the gap with a strict model registry, per-identity policy and a record of every attempt."
+order: 4
+---
+
+Shadow AI rarely looks like rebellion. It looks like a team that needed an answer, had a company card, and signed up for a model API. The traffic exists; the governance does not. The first step is making it visible, and the second is deciding what to do about it.
+
+## The short answer
+
+- You cannot govern what you cannot see: **log every model request** through one gateway.
+- A **strict registry** turns "unknown model" from a silent success into a refusal you can act on.
+- Attribute usage to an **identity**, so an unregistered client has a name attached.
+- Expect the first week to be noisy: most shadow usage is benign and simply needs an approved path.
+
+## How to do it in AI-FW
+
+1. **Put the gateway in the path.** Point clients at one base URL. OpenAI-compatible and Anthropic-compatible clients work with a base-URL change, which is usually a one-line edit per team.
+2. **Turn on strict model registration.** With `Reject unregistered models` enabled, a request for a model nobody approved is refused rather than forwarded. That converts invisible usage into an explicit, attributable event.
+3. **Watch the flags, not just the blocks.** Shadow AI appears in the [dashboard](/docs/guides/observability-dashboard) as unregistered-model attempts, and in [Audit Logs](/docs/admin/audit-logs) with the caller identity.
+4. **Give the team a legitimate path.** Register the model that was being used unofficially, attach a per-model key so credentials stay server-side, and route it under policy. The goal is adoption, not a permanent block.
+5. **Add risk scoring.** Repeated unregistered attempts raise the risk score for that identity, which can trigger an automatic cooldown while you resolve it.
+
+## Verify it works
+
+- Confirm unregistered-model attempts appear in the transaction log with an identity attached.
+- Check that registered models still serve normally: a strict registry should not break approved traffic.
+- Review [Model Inventory](/docs/admin/model-inventory) monthly for models that are registered but unused, and keys that should be rotated.
+
+## Related
+
+- [Shadow AI](/product/shadow-ai)
+- [Model routing & registry](/docs/guides/model-routing)
+- [Risk profiles & auto-block](/docs/guides/risk-profiles)
+
+<Callout type="info" title="Onboarding both ways">
+The [self-hosted buyer's checklist](/comparison/self-hosted-ai-gateway) covers what to look for in the discovery controls, and [Configure models & keys](/docs/how-to/configure-models-keys) walks through registering them.
+</Callout>

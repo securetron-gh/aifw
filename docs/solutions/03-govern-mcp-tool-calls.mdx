@@ -1,0 +1,38 @@
+---
+title: "Govern MCP tool calls by identity"
+description: "Decide which MCP tools an agent may call, with what arguments, and under whose identity, and keep an auditable record of every tool invocation."
+order: 3
+---
+
+A tool call is not a message. It changes state: it files a ticket, edits a record, sends a message, runs a query. Once agents can call tools, the question stops being "what did the model say" and becomes "what was permitted to happen, on whose authority".
+
+## The short answer
+
+- Treat tool calls as **governed actions** with an identity, not as part of the conversation.
+- Decide **per identity** which tools are allowed, and which arguments are acceptable.
+- Keep one policy surface instead of per-client allowlists that drift.
+- Record tool name, caller, decision and outcome - without storing the payload.
+
+## How to do it in AI-FW
+
+1. **Register the client.** MCP tools reach AI-FW through the same authenticated path as any other caller, so the agent has an identity (API key, JWT, or certificate) rather than a shared token.
+2. **Scope tools to groups.** Put agents with similar jobs in a group and attach tool policy to the group. A support agent and a finance agent should not inherit the same tool set by accident.
+3. **Decide by tool and argument.** Allow a search tool for everyone, restrict a write tool to a specific group, and mask or block sensitive argument patterns. Policy is data, not code, so it changes without a deployment.
+4. **Keep inspection in the path.** Prompts and responses are still scanned, so a tool call cannot become a way to smuggle content past the guardrails.
+5. **Use the same audit trail.** Every invocation lands in the transaction record with the identity and the decision, so a single query answers who called which tool.
+
+## Verify it works
+
+- Call a blocked tool and confirm the refusal comes back as a policy decision, not a client-side error.
+- Check [Audit Logs](/docs/admin/audit-logs) for the tool name, the caller and the outcome.
+- Review which identities actually invoke write tools; unused privileges are the easiest thing to remove.
+
+## Related
+
+- [MCP tools](/product/mcp-tools)
+- [Agents reference](/docs/admin/agents)
+- [A2A agent protocol](/docs/api-reference/a2a-agent-protocol)
+
+<Callout type="info" title="Extending coverage beyond chat">
+Coding agents, MCP tools and Microsoft 365 Copilot can all sit behind one policy engine. See [Governing the AI surfaces beyond chat](/comparison/governing-agent-surfaces).
+</Callout>

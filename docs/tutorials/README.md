@@ -1,6 +1,6 @@
 # Tutorials
 
-Hands-on walkthroughs. [Index](../README.md) · [Prev: Guides](../guides/README.md) · [Next: How-To](../how-to/README.md)
+Hands-on walkthroughs. [Index](../README.md) · [Prev: Solutions](../solutions/README.md) · [Next: How-To](../how-to/README.md)
 
 1. [Connect an OpenAI SDK](01-connect-openai-sdk.mdx) - endpoint and proxy modes
 2. [Claude Code, Cursor & MCP tools](02-claude-code-cursor-mcp.mdx) - Anthropic protocol, facades, MCP

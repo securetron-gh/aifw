@@ -1,0 +1,39 @@
+---
+title: "Mask PII before prompts leave your network"
+description: "Detect and mask personal data in prompts before they reach a model provider, while keeping the answer usable and the audit record content-free."
+order: 2
+---
+
+Most teams discover they are sending personal data to a model provider during a privacy review, not before it. Blocking every request is rarely acceptable, and ignoring it is not either. Masking is the middle path: replace the sensitive values before the request leaves, then let the model work on the redacted text.
+
+## The short answer
+
+- Mask on the **outbound path**, before the provider sees the content, rather than logging afterwards.
+- Decide per category: names, email addresses, phone numbers, account numbers, health data, card data.
+- Keep the **structure** of the request intact so tool calls and JSON bodies still parse.
+- Record the **decision** (masked, which categories) without storing the original content.
+
+## How to do it in AI-FW
+
+1. **Enable masking rules** for the categories you care about. Built-in detection covers the common cases; custom rules handle your own identifiers such as employee numbers or internal case references.
+2. **Choose the action per rule.** `mask` replaces the value; `block` refuses the request; `log` records the event without changing the prompt. Deny wins over accept, so a broad allow cannot override a specific mask.
+3. **Scope by identity where it matters.** A finance workload and a documentation-writing assistant can have different policies for the same category.
+4. **Check structure preservation.** Masked content is rewritten in place, so structured payloads and tool calls survive the round trip.
+5. **Keep the audit trail content-free.** The transaction records that masking happened and which categories applied. Raw prompts are not persisted.
+
+## Verify it works
+
+- Send a prompt containing a test email address and confirm the provider receives the redacted form.
+- Confirm the response is still usable: the model should answer normally with placeholders in place.
+- Inspect the [Audit Logs](/docs/admin/audit-logs) entry for the masking decision, and confirm no original value appears.
+- Review [Risk Profiles](/docs/admin/risk-profiles) for the PII category to see how often masking fires across your teams.
+
+## Related
+
+- [Prompt & response guardrails](/docs/guides/prompt-response-guardrails)
+- [Audit logs & export](/docs/guides/audit-logs-export)
+- [Identity & access](/docs/guides/identity-access)
+
+<Callout type="info" title="Data residency questions?">
+Inspection and masking run locally, so no third-party service sees your prompts. See [Data residency for AI traffic](/comparison/ai-data-residency) for the questions to put in an RFP.
+</Callout>

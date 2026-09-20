@@ -1,0 +1,39 @@
+---
+title: "Give agents real identities with mTLS"
+description: "Issue certificates to agents through a CSR enrollment flow, then authorize every model call against that identity instead of a shared API key."
+order: 5
+---
+
+An API key proves that someone holds a string. It does not say which agent is calling, whether that agent is still supposed to exist, or how to revoke it without rotating a credential every other workload shares. Agents that act autonomously need the same trust model you already use for servers.
+
+## The short answer
+
+- Give each agent its **own identity**: a key pair and a certificate, not a copied token.
+- Let agents **enroll themselves** with a certificate signing request, approved by policy.
+- Authorize on the **certificate identity**, so revocation does not require rotating shared secrets.
+- Keep keys, certificates and policy in one place so suspension is immediate.
+
+## How to do it in AI-FW
+
+1. **Choose the authentication mode per agent.** API key, JWT, mutual TLS, or Kerberos for domain-joined machines. Different agent populations can use different modes.
+2. **Run self-enrollment.** The agent generates a key pair, presents a certificate signing request to AI-FW, and receives a certificate. The private key never leaves the agent.
+3. **Attach policy to the identity.** Roles, model access, and tool permissions are granted to the agent or its group, not to every holder of a shared key.
+4. **Suspend by identity.** If an agent misbehaves, revoke its certificate. Every other workload keeps working - no organisation-wide rotation.
+5. **Bring your own CA if you prefer.** AI-FW integrates with certificate authority workflows, so issued certificates can follow the process your PKI team already runs.
+
+## Verify it works
+
+- Enroll a test agent and confirm it can call a model, then authorize a second request with a certificate that is not registered: it should be refused.
+- Revoke the test agent's certificate and confirm the next call fails while other agents continue normally.
+- Check the [Agents reference](/docs/admin/agents) and [Agent Trust](/docs/admin/agent-trust) for inventory, approvals and lifecycle state.
+- Confirm the audit record ties each call to the certificate identity.
+
+## Related
+
+- [Agent self-enrollment tutorial](/docs/tutorials/agent-self-enrollment)
+- [Identity & access](/docs/guides/identity-access)
+- [CA integrations](/docs/admin/ca-integrations)
+
+<Callout type="info" title="Identity is the differentiator">
+Treating agents as identities rather than clients is what makes agent-to-agent work provable. See [AI gateway vs AI firewall](/comparison/ai-gateway-vs-ai-firewall).
+</Callout>
