@@ -1,0 +1,108 @@
+---
+title: "Chain of Command for governed AI agents"
+description: "Build consent-based agent swarms, delegate approved skills, and verify every command before execution."
+order: 12
+---
+
+Chain of Command lets an organization coordinate AI agents without giving one agent unrestricted control over another. An owner creates a governed group, grants only the skills it needs, and keeps a record of consent, authorization, and execution results.
+
+## How the model works
+
+A **hub agent** leads a **swarm** of one or more sub-agents. A swarm defines the skills that the hub may send to its members. The hub is an ordinary registered agent that becomes a hub when it leads a swarm.
+
+Two independent checks protect each member:
+
+1. **Consent**: the member's owner allows the hub to issue instructions.
+2. **Capability**: the swarm owner grants the hub a specific permission, such as viewing status or reading permitted audit information.
+
+Consent does not grant access to every capability. A capability grant does not create consent. Both checks are evaluated when an operation is requested, so revocation takes effect without waiting for a new deployment.
+
+## Create a governed swarm
+
+The general workflow is:
+
+1. Register each agent with a unique identity and identity proof.
+2. Publish the agents when your onboarding policy requires approval.
+3. Assign ownership and issue an agent credential.
+4. Create a swarm with the selected members and approved skills.
+5. Record consent for members owned by another person or group.
+6. Grant only the capabilities required for the hub's role.
+7. Send orders as the hub and monitor each member's result.
+
+A member with a different owner remains pending until that owner records consent. A member with no known owner is treated conservatively and also requires consent.
+
+## Control permissions
+
+Swarm permissions are explicit and scoped to the swarm. Common capabilities include:
+
+- View a member's status
+- Read permitted member audit information
+- Reset a member's risk state
+- Request suspension or unsuspension
+- Request certificate revocation through the administrator-controlled certificate workflow
+
+Sensitive actions can require owner approval. Certificate revocation remains on the administrator or certificate-authority path and is not performed by a hub simply because it has a delegation.
+
+You can also configure lifecycle behavior for a swarm. For example, a suspension policy can suspend members with their hub, while a revocation policy can send the event for review instead of changing member state silently. These policies are opt-in and auditable.
+
+## Delegate skills safely
+
+A custom skill describes an action that the platform authorizes, validates, audits, and relays to a registered agent webhook. The receiving agent performs the action and reports the result. The platform does not execute arbitrary custom skill code on the agent's behalf.
+
+For each delegation, define:
+
+- The skill or skills that may be used
+- The maximum delegation depth
+- An optional expiration
+- The payload validation rules, unless the organization explicitly chooses a free-form skill
+
+Keep custom skills narrow. A skill should describe one meaningful operation with a predictable payload instead of becoming a general-purpose command channel.
+
+## Verify commands before execution
+
+Commands can carry a short-lived signed voucher that identifies:
+
+- The swarm order and member leg
+- The issuing hub
+- The intended sub-agent
+- The skill and payload hash
+- The policy version used for authorization
+- The issue and expiration times
+
+The receiving agent verifies the voucher against its pinned trust anchor before acting. Verification must fail closed when the token is malformed, signed with an unsupported algorithm, issued by an unknown key, expired, intended for another agent, mismatched with the received payload, or based on stale policy.
+
+Choose the verification posture that matches the risk of the operation:
+
+| Posture | Behavior |
+|---|---|
+| Offline | Verify locally and execute without a platform callback. |
+| Callback optional | Verify locally, then confirm with the platform when it is reachable. |
+| Callback required | Refuse execution unless the platform confirms that the authorization is still valid. |
+
+Pin the trust-anchor fingerprint out of band when an agent is installed. Keep the trusted key locally and refresh it through an explicit key-rotation process rather than fetching an unverified key for every command.
+
+## Track results and retries
+
+A swarm order is split into one leg per member. A relayed leg is not the same as a successful leg: the receiving agent owns execution and must report the result.
+
+Reports are signed by the receiving agent. A verified report becomes a completed or failed result. A missing or invalid signature is recorded as unverified rather than being treated as success.
+
+Use an idempotency key when sending an order. Retrying the same order within the idempotency window returns the original order instead of dispatching it again. Individual legs also prevent duplicate dispatch. Revoking an order stops legs that have not started and leaves completed work unchanged.
+
+## Troubleshooting
+
+| Symptom | Check |
+|---|---|
+| A member is not receiving orders | Check that its owner recorded active consent and that the skill is included in the swarm grant. |
+| A hub cannot view a member | Check the matching capability and the member's consent. Visibility is scoped to the caller. |
+| A command is rejected as expired or stale | Request a new order. The voucher may have expired or the member's authorization policy may have changed. |
+| A result is unverified | Confirm that the agent has a registered public key and that the report was signed with the corresponding private key. |
+| A retry dispatches nothing | Confirm that the same idempotency key was used. This is expected behavior for a replayed order. |
+
+## Related documentation
+
+- [A2A agent protocol](https://aifw.io/docs/api-reference/a2a-agent-protocol)
+- [Agent self-enrollment](https://aifw.io/docs/tutorials/agent-self-enrollment)
+- [Agent Trust administration](https://aifw.io/docs/admin/agent-trust)
+- [Agent identity and mTLS](https://aifw.io/docs/solutions/agent-identities-mtls)
+- [API keys for agent access](https://aifw.io/docs/guides/agent-api-keys)
