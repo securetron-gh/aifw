@@ -1,0 +1,113 @@
+---
+title: "Compliance module administration"
+description: "Enable framework assessments, review control gaps, create linked rules, record attestations, and export evidence from the Compliance module."
+order: 13
+---
+
+The Compliance module shows which technical controls your AIFW installation can prove and which it cannot. It reads the live rule configuration, evaluates selected frameworks, records gaps and attestations, and produces evidence reports.
+
+The module is separate from the rules engine. The rules engine enforces traffic policy. The Compliance module assesses that configuration and reports the result. A compliance gap is not itself a traffic decision.
+
+> The Compliance module is not legal advice, certification, or a replacement for organizational controls. Use the primary sources for each framework and confirm applicability with qualified counsel, an auditor, assessor, or certification body.
+
+## Enable the module
+
+Open **AI Firewall -> Agent Config -> Compliance**. The Compliance section is available when the module is enabled. When it is off, no assessment runs, no scheduled compliance work runs, and the **Compliance** navigation item is hidden.
+
+| Setting | Default | Meaning |
+|---|---|---|
+| **Enable the compliance module** (`ai_fw_compliance_enabled`) | Off | Turns framework assessment and evidence generation on or off. |
+| **Frameworks** (`compliance_frameworks_enabled`) | None selected | Select the frameworks to assess. The stored value is a comma-separated list of framework identifiers. |
+| **Report schedule** (`compliance_report_schedule`) | `weekly` | Controls the schedule used for evidence reports: `off`, `daily`, `weekly`, or `monthly`. |
+| **Assessment interval (minutes)** (`compliance_assessment_interval_minutes`) | `1440` | Controls scheduled assessment frequency. The application accepts values from `15` to `10080` minutes. |
+| **Evidence retention (days)** (`compliance_evidence_retention_days`) | Deployment setting | Controls how long generated evidence reports are retained. The UI accepts values from `30` to `3650` days. |
+| **Raise drift events** (`compliance_drift_alert_enabled`) | Deployment setting | Records an event when a rule change affects a control that was previously assessed. |
+| **Attestation expiry (days)** (`compliance_attestation_expiry_days`) | Deployment setting | Sets how long a manual attestation remains valid before it must be renewed. The UI accepts values from `1` to `3650` days. |
+
+The settings page also links to the **Compliance** page, where posture and evidence are reviewed.
+
+## Review the Compliance page
+
+Open **Compliance** from the sidebar after enabling the module. The page shows:
+
+- **Frameworks under management**: frameworks selected for assessment.
+- **Controls assessed**: controls included in the current scope.
+- **Open gaps**: controls that are missing, disabled, or misconfigured.
+- **Posture score**: the latest assessment score, or **Not measured** before the first assessment.
+
+Use **Run assessment** to evaluate the selected scope. The page provides explicit empty states when the module is disabled or no assessment has run, so an empty page is not treated as a pass.
+
+## Manage frameworks and controls
+
+The framework table shows the current status, control count, gaps, and score for each framework. Use **Enable** or **Disable** to change which frameworks are under management.
+
+The controls table can be filtered by:
+
+| Filter | Use |
+|---|---|
+| **Status** | Focus on compliant controls, open gaps, unknown results, or other assessment outcomes. |
+| **Severity** | Prioritize controls with higher impact. |
+| **Mandatory** | Separate mandatory controls from supporting controls. |
+
+Each control shows its requirement, severity, current status, attached rule, attestation, and evidence detail. A control whose rule is missing or disabled is reported as a gap rather than a pass.
+
+## Create and link a rule
+
+When a selected framework provides a rule pack, choose a **Control** and **Template**, enter a **Pattern or keywords** value, and select **Create and link**.
+
+The module supplies the expected direction, action, and severity. The new rule is created enabled and linked to the control, then appears in the control row for later assessment. Review the generated pattern before relying on it in production.
+
+## Record an attestation
+
+Some framework obligations require a named human decision or organizational activity. When a control supports an attestation, use **Attest** and provide the basis for the statement.
+
+An attestation records:
+
+- The person who made the statement
+- The expiry date
+- An optional note describing its basis
+
+Use **Withdraw** when the statement is no longer valid. Expired or withdrawn attestations do not count as proven controls.
+
+## Understand assessment results
+
+The Compliance page distinguishes between a missing control and an unknown result:
+
+| Result | Meaning |
+|---|---|
+| **Compliant** | The configured control satisfies the assessment checks. |
+| **Unknown** | The module could not verify the underlying configuration or identity coverage. |
+| **GapMissing** | The expected rule or control is not present. |
+| **GapDisabled** | The expected rule exists but is disabled. |
+| **GapMisconfigured** | The rule exists but does not match the expected configuration. |
+| **AttestationExpired** | A required human attestation has expired. |
+
+A control that exists but is switched off is a gap. An unreadable rule inventory is unknown, not an empty inventory. This distinction prevents an unavailable data source from being treated as evidence of compliance.
+
+## Evidence and drift
+
+Evidence reports are generated per framework and persist beyond the assessment that created them. Reports are available as:
+
+- JSON for machine-readable processing
+- CSV for review and spreadsheet workflows
+
+Reports contain control status, rule state, relevant settings, retention information, and inventory evidence. Prompt and response content is not included in the evidence pack.
+
+When **Raise drift events** is enabled, changing a rule that a control depends on records the affected control, the change, and the actor. Run a new assessment after resolving drift so the posture reflects the current configuration.
+
+## A2A identity prerequisite
+
+Identity-scoped controls require authenticated agent traffic. If `a2a_auth_mode` is `off`, the Compliance page identifies the prerequisite and reports affected identity controls as **UNKNOWN** rather than compliant. Enable A2A authentication from **AI Firewall -> Agent Config -> Access & Identity** before assessing identity coverage.
+
+## Related documentation
+
+- [AI compliance frameworks](https://aifw.io/compliance)
+- [Audit logs & export](https://aifw.io/docs/guides/audit-logs-export)
+- [Prompt and response guardrails](https://aifw.io/docs/guides/prompt-response-guardrails)
+- [Agent Trust reference](https://aifw.io/docs/admin/agent-trust)
+
+## Where to go next
+
+- [AI compliance frameworks](https://aifw.io/compliance)
+- [Audit logs and SIEM export](https://aifw.io/docs/guides/audit-logs-export)
+- [Trust and certifications](https://aifw.io/trust)

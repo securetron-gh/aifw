@@ -14,5 +14,6 @@ Every admin page and its options. [Index](../README.md) · [Prev: API Reference]
 10. [Agents reference](10-agents.mdx) - registry policy, groups, webhooks
 11. [CA integrations reference](11-ca-integrations.mdx) - SCEP, ACME, trust store
 12. [Agent Trust reference](12-agent-trust.mdx) - inventory, approvals, tasks
+13. [Compliance module administration](13-compliance-module.mdx) - framework scope, assessments, gaps, attestations, and evidence
 
 Rendered: https://aifw.io/docs/admin/settings
