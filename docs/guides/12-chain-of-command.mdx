@@ -17,6 +17,18 @@ Two independent checks protect each member:
 
 Consent does not grant access to every capability. A capability grant does not create consent. Both checks are evaluated when an operation is requested, so revocation takes effect without waiting for a new deployment.
 
+## Configure Chain of Command
+
+Open **Settings -> Agent Trust** to review the registry and ownership policy before creating a swarm. Chain of Command requires authenticated A2A agents and owner-aware enforcement. The relevant settings are:
+
+- `a2a_auth_mode`: enables authenticated agent identity resolution.
+- `identity_policy_owner_enforced`: requires ownership to be established before agent instructions are accepted.
+- `owner_enforcement_grace_days`: controls the grace period for an unclaimed agent.
+- `max_delegation_depth`: limits how far an instruction may be delegated.
+- `swarm_consent_valid_days`: controls how long recorded cross-owner consent remains active. A value of `0` means consent does not expire automatically.
+
+Use **Agent Trust -> Agent Inventory** to register and review agents. If your onboarding policy requires approval, use **Agent Trust -> Approvals** to publish an agent before adding it to a swarm. Owners can review consent and delegation state from the agent management views, while sensitive requests are handled through the approval workflow.
+
 ## Create a governed swarm
 
 The general workflow is:
