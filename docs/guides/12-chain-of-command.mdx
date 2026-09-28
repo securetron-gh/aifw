@@ -19,15 +19,25 @@ Consent does not grant access to every capability. A capability grant does not c
 
 ## Configure Chain of Command
 
-Open **Settings -> Agent Trust** to review the registry and ownership policy before creating a swarm. Chain of Command requires authenticated A2A agents and owner-aware enforcement. The relevant settings are:
+Use the application navigation to configure the feature:
 
-- `a2a_auth_mode`: enables authenticated agent identity resolution.
-- `identity_policy_owner_enforced`: requires ownership to be established before agent instructions are accepted.
-- `owner_enforcement_grace_days`: controls the grace period for an unclaimed agent.
-- `max_delegation_depth`: limits how far an instruction may be delegated.
-- `swarm_consent_valid_days`: controls how long recorded cross-owner consent remains active. A value of `0` means consent does not expire automatically.
+- **AI Firewall -> Agent Config -> Access & Identity** contains **A2A Auth Mode**, allowed A2A authentication methods, and **Owner-first authorization**.
+- **Agent Trust -> A2A Settings** contains registry onboarding, task lifecycle, and TTL settings.
+- **Agent Trust -> Agents** opens the agent inventory. **Agent Trust -> Approvals** handles pending agent enrollments and task approvals.
 
-Use **Agent Trust -> Agent Inventory** to register and review agents. If your onboarding policy requires approval, use **Agent Trust -> Approvals** to publish an agent before adding it to a swarm. Owners can review consent and delegation state from the agent management views, while sensitive requests are handled through the approval workflow.
+Chain of Command requires authenticated A2A agents and owner-aware enforcement. The relevant settings are:
+
+| Setting | Default | Meaning |
+|---|---:|---|
+| `a2a_auth_mode` | `off` | Set to `on` to require authentication on `/a2a/v1/*`. The application notes that Chain of Command is disabled when this is `off`. |
+| `identity_policy_owner_enforced` | `false` | Set to `true` to enable owner-first authorization. The application requires A2A authentication for this mode. |
+| `owner_enforcement_grace_days` | `7` | Grace period, in days, for an unclaimed agent after owner-first authorization is enabled. The supported range is `0` to `90`. |
+| `max_delegation_depth` | `3` | Maximum delegation depth. The supported range is `1` to `10`; an individual delegation may set a tighter limit. |
+| `swarm_consent_valid_days` | `0` | Lifetime of recorded swarm consent, in days. `0` means consent does not expire automatically and remains until withdrawn. |
+
+The A2A authentication setting is separate from the AI Firewall **Authentication Mode** for `/v1/*` traffic. In **A2A Auth Mode**, choose the authentication methods agents may use, such as JWT, OIDC, API keys, mTLS client certificates, or Kerberos when available.
+
+If the registry **Onboarding Mode** is **Admin approval**, new agents appear in **Agent Trust -> Approvals** as pending enrollments. **Auto-publish** publishes registering agents immediately, while **Admin-only** rejects self-registration. Only published agents can be used as swarm members.
 
 ## Create a governed swarm
 
@@ -114,6 +124,7 @@ Use an idempotency key when sending an order. Retrying the same order within the
 ## Related documentation
 
 - [A2A agent protocol](https://aifw.io/docs/api-reference/a2a-agent-protocol)
+- [Audit logs & export](https://aifw.io/docs/guides/audit-logs-export), including settings tables and audit behavior
 - [Agent self-enrollment](https://aifw.io/docs/tutorials/agent-self-enrollment)
 - [Agent Trust administration](https://aifw.io/docs/admin/agent-trust)
 - [Agent identity and mTLS](https://aifw.io/docs/solutions/agent-identities-mtls)
