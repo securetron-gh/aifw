@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aifw-coc"
+version = "1.0.0"
+description = "AI-FW Chain of Command SDK: swarms, orders, offline command-voucher verification, signed result reporting"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = ["cryptography>=41"]
+
+[project.urls]
+Documentation = "https://aifw.io/docs/guides/chain-of-command"
+
+[tool.setuptools]
+packages = ["aifw_coc"]

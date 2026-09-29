@@ -121,6 +121,18 @@ Use an idempotency key when sending an order. Retrying the same order within the
 | A result is unverified | Confirm that the agent has a registered public key and that the report was signed with the corresponding private key. |
 | A retry dispatches nothing | Confirm that the same idempotency key was used. This is expected behavior for a replayed order. |
 
+## SDKs
+
+The public SDK sources include independent Python and TypeScript implementations
+of the Chain of Command client and voucher verification flow:
+
+- [Python SDK](https://github.com/securetron-gh/aifw/tree/main/sdk/python)
+- [TypeScript / Node SDK](https://github.com/securetron-gh/aifw/tree/main/sdk/typescript)
+- [Voucher verification test vector](https://github.com/securetron-gh/aifw/blob/main/sdk/testdata/voucher-vector.json)
+
+Both SDKs are published under the MIT License and support agent-side voucher
+verification, signed result reporting, and operator-side swarm management.
+
 ## Related documentation
 
 - [A2A agent protocol](https://aifw.io/docs/api-reference/a2a-agent-protocol)

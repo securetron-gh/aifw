@@ -14,11 +14,15 @@ The AI-FW documentation, organized by section. The rendered version lives at
 7. [Admin Reference](admin/README.md) - every admin page and its options
 8. [Community Edition](community-edition/README.md) - the free edition license and monthly token allowance
 
-## Editing
+## Using this documentation
 
-Each page is an MDX file with `title`, `description`, and `order` frontmatter.
-The `NN-` prefix on filenames controls ordering within a section. Pages are
-rendered at `https://aifw.io/docs/<section>/<slug>`.
+Start with [Getting Started](getting-started/README.md) to understand AI-FW and
+connect your first client. Use the [Guides](guides/README.md), [How-To](how-to/README.md),
+and [Admin Reference](admin/README.md) sections for configuration and operation.
+The [API Reference](api-reference/README.md) documents integration endpoints and
+protocols, while [Solutions](solutions/README.md) maps common governance goals
+to practical implementation steps.
 
-See the website repository (`aifw-website`, `src/content/docs/`) for the source
-of truth, which regenerates this content.
+The rendered knowledge base is available at
+[https://aifw.io/docs](https://aifw.io/docs), and each section can also be read
+as Markdown in this repository.
