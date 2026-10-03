@@ -45,12 +45,14 @@ Legend: ✅ native · 🧩 via partner or plugin · ❌ not supported
 | Identity & agents | [Identity &amp; access (IDAM)](docs/guides/04-identity-access.mdx) | [Read](https://aifw.io/docs/guides/identity-access) | ✅ |
 | Identity & agents | [Admin-issued API keys](docs/guides/11-agent-api-keys.mdx) | [Read](https://aifw.io/docs/guides/agent-api-keys) | ✅ |
 | Identity & agents | [A2A agent protocol](docs/api-reference/03-a2a-agent-protocol.mdx) | [Read](https://aifw.io/docs/api-reference/a2a-agent-protocol) | ✅ |
+| Identity & agents | [Chain of Command](docs/guides/12-chain-of-command.mdx) | [Read](https://aifw.io/docs/guides/chain-of-command) | ✅ |
 | Identity & agents | [Agent self-enrollment](docs/tutorials/04-agent-self-enrollment.mdx) | [Read](https://aifw.io/docs/tutorials/agent-self-enrollment) | ✅ |
 | Cost | [Completion cache](docs/guides/06-reliability-caching.mdx) | [Read](https://aifw.io/docs/guides/reliability-caching) | ✅ |
 | Cost | [Prompt compression](docs/guides/07-prompt-compression.mdx) | [Read](https://aifw.io/docs/guides/prompt-compression) | ✅ |
 | Observability & audit | [Observability &amp; dashboard](docs/guides/09-observability-dashboard.mdx) | [Read](https://aifw.io/docs/guides/observability-dashboard) | ✅ |
 | Observability & audit | [Risk profiles &amp; auto-block](docs/guides/05-risk-profiles.mdx) | [Read](https://aifw.io/docs/guides/risk-profiles) | ✅ |
 | Observability & audit | [Audit logs &amp; export](docs/guides/10-audit-logs-export.mdx) | [Read](https://aifw.io/docs/guides/audit-logs-export) | ✅ |
+| Governance & compliance | [Compliance module administration](docs/admin/13-compliance-module.mdx) | [Read](https://aifw.io/docs/admin/compliance-module) | ✅ |
 | Integrations | [M365 Copilot admin](docs/tutorials/03-m365-copilot-bridge.mdx) | [Read](https://aifw.io/docs/tutorials/m365-copilot-bridge) | ✅ |
 | Integrations | [Claude Code, Cursor &amp; MCP](docs/tutorials/02-claude-code-cursor-mcp.mdx) | [Read](https://aifw.io/docs/tutorials/claude-code-cursor-mcp) | ✅ |
 | Integrations | [Endpoint gateway](docs/api-reference/01-openai-compatible-api.mdx) | [Read](https://aifw.io/docs/api-reference/openai-compatible-api) | ✅ |
@@ -60,6 +62,7 @@ Legend: ✅ native · 🧩 via partner or plugin · ❌ not supported
 | Core & reference | [Prompt Analyzer](docs/admin/03-rules-manager.mdx) | [Read](https://aifw.io/docs/admin/rules-manager) | ✅ |
 | Core & reference | [Admin pages](docs/admin/01-settings.mdx) | [Read](https://aifw.io/docs/admin/settings) | ✅ |
 | Core & reference | [Supported models &amp; endpoints (200+)](docs/api-reference/04-openai-compatible-endpoints.mdx) | [Read](https://aifw.io/docs/api-reference/openai-compatible-endpoints) | ✅ |
+| SDKs | [Chain of Command Python and TypeScript SDKs](sdk/README.md) | [Read](https://github.com/securetron-gh/aifw/tree/main/sdk) | ✅ |
 
 ![OpenAI](https://img.shields.io/badge/OpenAI-111?style=flat&logo=openai&logoColor=white) ![Anthropic](https://img.shields.io/badge/Anthropic-111?style=flat&logo=anthropic&logoColor=white) ![Google](https://img.shields.io/badge/Google-111?style=flat&logo=google&logoColor=white) ![Meta](https://img.shields.io/badge/Meta-111?style=flat&logo=meta&logoColor=white) ![xAI](https://img.shields.io/badge/xAI-111?style=flat&logo=xai&logoColor=white) ![DeepSeek](https://img.shields.io/badge/DeepSeek-111?style=flat&logo=deepseek&logoColor=white) ![Mistral](https://img.shields.io/badge/Mistral-111?style=flat&logo=mistral&logoColor=white) ![Groq](https://img.shields.io/badge/Groq-111?style=flat&logo=groq&logoColor=white) ![Azure](https://img.shields.io/badge/Azure-111?style=flat&logo=microsoftazure&logoColor=white) ![AWS](https://img.shields.io/badge/AWS-111?style=flat&logo=amazonaws&logoColor=white) ![Alibaba](https://img.shields.io/badge/Alibaba-111?style=flat&logo=alibabacloud&logoColor=white) ![Ollama](https://img.shields.io/badge/Ollama-111?style=flat&logo=ollama&logoColor=white)
 
@@ -147,8 +150,8 @@ flowchart TD
   C --> C1["guardrails, routing, semantic, identity, risk, reliability, compression, hooks, observability, audit, API keys"]
   D --> D1["OpenAI SDK, Claude Code & MCP, M365, agent enrollment"]
   E --> E1["models & keys, AI-assisted rules, Azure"]
-  F --> F1["OpenAI-compatible, Anthropic Messages, A2A, endpoints"]
-  G --> G1["settings, inventory, rules, risk, audit, dashboard, M365, users, keys, agents, CA, trust"]
+  F --> F1["OpenAI-compatible, Anthropic Messages, A2A, endpoints, current model catalog"]
+  G --> G1["settings, inventory, rules, risk, audit, dashboard, M365, users, keys, agents, CA, trust, compliance"]
   H --> H1["license & monthly token allowance"]
 ```
 

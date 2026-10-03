@@ -5,10 +5,14 @@ order: 4
 ---
 
 The AI-FW Model Inventory accepts any OpenAI-compatible backend URL. This
-reference lists the current model IDs and endpoints for the major vendors,
-taken from each vendor's public documentation. **Model IDs change frequently, so
-always verify against the vendor's live model list before configuring a
-model.**
+reference lists representative current model IDs and endpoints for the major
+vendors, checked against their public model documentation on 1 October 2026.
+**Model IDs change frequently, so always verify against the vendor's live model
+list before configuring a model.**
+
+The live model-list endpoints are the authoritative source when a provider
+supports them. The lists below are deliberately representative rather than an
+attempt to freeze every preview, regional deployment, or dated snapshot.
 
 Auth is `Authorization: Bearer <key>` unless noted. Claude models are reachable
 from OpenAI-compatible clients through the AI-FW Anthropic facade.
@@ -17,9 +21,9 @@ from OpenAI-compatible clients through the AI-FW Anthropic facade.
 
 Base URL: `https://api.openai.com/v1`
 
-- Flagship: `gpt-5.6-sol` (alias `gpt-5.6`), `gpt-5.6-terra`, `gpt-5.6-luna`
-- Specialized: `gpt-5.6-cyber`, `gpt-daybreak-red-latest`, `gpt-daybreak-blue-latest`, `gpt-image-2`, `gpt-realtime-2.1`, `gpt-realtime-2.1-mini`, `gpt-realtime-2`, `gpt-realtime-translate`, `gpt-realtime-1.5`, `gpt-4o-mini-tts`, `gpt-transcribe`, `gpt-live-transcribe`, `gpt-realtime-whisper`, `gpt-4o-transcribe`, `gpt-4o-mini-transcribe`
-- Stable families (verify): `gpt-4o`, `gpt-4o-mini`, `gpt-4.1`, `gpt-4.1-mini`, `gpt-4.1-nano`, `o3`, `o4-mini`, `text-embedding-3-small`, `text-embedding-3-large`
+- Use the live `GET https://api.openai.com/v1/models` response for the complete account-specific list.
+- Representative current families: `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-5.5`, `gpt-5.4`, `gpt-5.4-mini`, `gpt-5.4-nano`, `gpt-5.3-codex`, `gpt-5.2`, `gpt-5.1`, `gpt-5`, `gpt-4.1`, `gpt-4o`, `o4-mini`
+- Specialized: `gpt-image-2`, `gpt-realtime-2.1`, `gpt-realtime-2.1-mini`, `gpt-4o-mini-tts`, `gpt-transcribe`, `gpt-live-transcribe`, `gpt-4o-transcribe`, `gpt-4o-mini-transcribe`, `text-embedding-3-small`, `text-embedding-3-large`
 
 ```bash
 curl https://api.openai.com/v1/chat/completions -H "Authorization: Bearer $OPENAI_KEY" \
@@ -37,9 +41,9 @@ Base URL: `https://<resource>.openai.azure.com/openai/v1` (deployment-based, `ap
 
 Native base URL: `https://api.anthropic.com` (Anthropic `/v1/messages` format; auth `x-api-key`). Reachable from OpenAI-compatible clients via the AI-FW facade.
 
-- Current: `claude-fable-5-1`, `claude-opus-5`, `claude-sonnet-5`, `claude-haiku-4-5` (dated `claude-haiku-4-5-20251001`)
-- Legacy (still available): `claude-opus-4-8`, `claude-opus-4-7`, `claude-opus-4-6`, `claude-opus-4-5`, `claude-sonnet-4-6`, `claude-sonnet-4-5`, `claude-fable-5`
-- Bedrock IDs: `anthropic.claude-opus-5`, `anthropic.claude-sonnet-5`, `anthropic.claude-haiku-4-5`
+- Current families: `claude-fable-5-1`, `claude-opus-5.5`, `claude-sonnet-5`, `claude-haiku-4-5`
+- Use dated model IDs when reproducibility matters. The Anthropic Models API is the authoritative source for the exact dated IDs and capabilities.
+- Bedrock IDs use the `anthropic.claude-*` prefix and differ from the native Anthropic IDs. Verify the enabled model list in the target AWS Region.
 
 ## X (Grok)
 
@@ -69,22 +73,24 @@ OpenAI-compatible via the Bedrock Runtime (`InvokeModel`/`Converse`) with `accep
 
 Base URL (OpenAI format): `https://api.deepseek.com` (also `/anthropic` for Anthropic format)
 
-- `deepseek-v4-flash`, `deepseek-v4-pro`, `deepseek-v4-flash-vision-exp`
-- On Bedrock: `deepseek-v3-2`, `deepseek-v3-1`, `deepseek-r1`
+- Recommended: `deepseek-flash` (DeepSeek-V4.1-Flash)
+- Pro: `deepseek-v4-pro`
+- Legacy aliases: `deepseek-v4-flash`, `deepseek-v4-flash-vision-exp` may still be accepted but should not be used for new configuration. `deepseek-chat` and `deepseek-reasoner` are retired according to the current provider documentation.
 
 ## Mistral
 
 Base URL: `https://api.mistral.ai/v1`
 
-- `mistral-medium-3-5-26-04`, `mistral-small-4-0-26-03`, `mistral-large-3-25-12`, `ministral-3-14b-25-12`, `ministral-3-8b-25-12`, `ministral-3-3b-25-12`, `codestral-25-08`, `mistral-embed-23-12`, `codestral-embed-25-05`, `voxtral-mini-transcribe-26-02`, `voxtral-small-25-07`, `ocr-4-1`, `ocr-4-0`, `mistral-moderation-26-03`, `shieldstral-1-0`, `zai-glm-5-2` (Z.ai GLM hosted by Mistral)
+- Representative current families: `mistral-medium-latest`, `mistral-large-latest`, `mistral-small-latest`, `ministral-3-14b`, `ministral-3-8b`, `codestral-latest`, `mistral-embed`, `codestral-embed`, `voxtral-mini-transcribe`, `voxtral-small`, `mistral-ocr-latest`, `mistral-moderation-latest`
+- Dated IDs and product availability vary by API tier. Verify the current model catalog before pinning a dated release.
 
 ## Google Gemini
 
 OpenAI-compatible base URL: `https://generativelanguage.googleapis.com/v1beta/openai/`
 
-- `gemini-3.7-flash`, `gemini-3.6-flash`, `gemini-3.5-flash`, `gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-3.1-pro-preview`, `gemini-3-flash-preview`, `gemini-3.5-transcribe`, `gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.5-flash-lite`
-- Media: `gemini-3.1-flash-image` (Nano Banana 2), `gemini-2.5-flash-image` (Nano Banana), `veo-3.1-generate-preview`, `lyria-3-pro-preview`
-- Embeddings: `gemini-embedding-2-preview`, `gemini-embedding-001`
+- Current text families: `gemini-3.8-flash`, `gemini-3.7-flash`, `gemini-3.6-flash`, `gemini-3.5-flash`, `gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-3.1-pro`, `gemini-3.1-pro-preview`, `gemini-3-flash-preview`, `gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.5-flash-lite`
+- Live and media: `gemini-3.8-live`, `gemini-3.8-live-extended-thinking`, `gemini-3.1-flash-image`, `gemini-2.5-flash-image`, `veo-3.1-generate-preview`
+- Embeddings: `gemini-embedding-2`, `gemini-embedding-2-preview`, `gemini-embedding-001`
 
 ## Groq
 
@@ -119,7 +125,7 @@ OpenAI-compatible base URL: `https://open.bigmodel.cn/api/paas/v4` (Z.ai API)
 
 | Vendor | Base URL | Representative models |
 |---|---|---|
-| OpenRouter | `https://openrouter.ai/api/v1` | 300+ models: `openai/gpt-5.6-luna`, `anthropic/claude-sonnet-5`, `google/gemini-3.7-flash`, `meta-llama/llama-3.3-70b-instruct`, `x-ai/grok-4.6`, `deepseek/deepseek-chat`, `qwen/qwen3-*` |
+| OpenRouter | `https://openrouter.ai/api/v1` | 300+ models: `openai/gpt-5.6-luna`, `anthropic/claude-sonnet-5`, `google/gemini-3.7-flash`, `meta-llama/llama-3.3-70b-instruct`, `x-ai/grok-4.6`, `deepseek/deepseek-v4-pro`, `qwen/qwen3-*` |
 | Together AI | `https://api.together.xyz/v1` | `meta-llama/Llama-3.3-70B-Instruct-Turbo`, `Qwen/Qwen2.5-72B-Instruct`, `deepseek-ai/DeepSeek-V3` |
 | Fireworks AI | `https://api.fireworks.ai/inference/v1` | `accounts/fireworks/models/llama-v3p3-70b-instruct`, `qwen2p5-72b-instruct`, `deepseek-v3` |
 | DeepInfra | `https://api.deepinfra.com/v1/openai` | `meta-llama/Llama-3.3-70B-Instruct`, `Qwen/Qwen2.5-72B-Instruct`, `deepseek-ai/DeepSeek-V3` |
@@ -137,3 +143,9 @@ Register any of these backend URLs in the Model Inventory with the matching
 model ID and provider key, then route traffic through the gateway. See
 [Configure models & keys](/docs/how-to/configure-models-keys).
 </Callout>
+
+## Where to go next
+
+- [Configure models and provider keys](https://aifw.io/docs/how-to/configure-models-keys)
+- [Model routing and registry](https://aifw.io/docs/guides/model-routing)
+- [Prompt and response guardrails](https://aifw.io/docs/guides/prompt-response-guardrails)
