@@ -6,9 +6,9 @@ order: 4
 
 The AI-FW Model Inventory accepts any OpenAI-compatible backend URL. This
 reference lists representative current model IDs and endpoints for the major
-vendors, checked against their public model documentation on 1 October 2026.
-**Model IDs change frequently, so always verify against the vendor's live model
-list before configuring a model.**
+vendors, checked against each vendor's public model documentation on
+2 October 2026. **Model IDs change frequently, so always verify against the
+vendor's live model list before configuring a model.**
 
 The live model-list endpoints are the authoritative source when a provider
 supports them. The lists below are deliberately representative rather than an
@@ -22,36 +22,48 @@ from OpenAI-compatible clients through the AI-FW Anthropic facade.
 Base URL: `https://api.openai.com/v1`
 
 - Use the live `GET https://api.openai.com/v1/models` response for the complete account-specific list.
-- Representative current families: `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-5.5`, `gpt-5.4`, `gpt-5.4-mini`, `gpt-5.4-nano`, `gpt-5.3-codex`, `gpt-5.2`, `gpt-5.1`, `gpt-5`, `gpt-4.1`, `gpt-4o`, `o4-mini`
-- Specialized: `gpt-image-2`, `gpt-realtime-2.1`, `gpt-realtime-2.1-mini`, `gpt-4o-mini-tts`, `gpt-transcribe`, `gpt-live-transcribe`, `gpt-4o-transcribe`, `gpt-4o-mini-transcribe`, `text-embedding-3-small`, `text-embedding-3-large`
+- GPT-6 family (current generation, 1.05M context, 128K max output):
+  - `gpt-6-astra`: flagship for the most demanding work
+  - `gpt-6.1-sol`: near-Astra performance for complex work at a lower cost
+  - `gpt-6-sol`: earlier GPT-6 Sol release
+  - `gpt-6-luna`: most efficient tier for focused, high-volume work
+- GPT-5.6 family (previous generation, still available): `gpt-5.6-sol` (alias `gpt-5.6`), `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-5.5`, `gpt-5.4`, `gpt-5.4-mini`, `gpt-5.4-nano`, `gpt-5.3-codex`, `gpt-5.2`, `gpt-5.1`, `gpt-5`
+- Older stable families (verify): `gpt-4.1`, `gpt-4.1-mini`, `gpt-4o`, `gpt-4o-mini`, `o4-mini`
+- Specialized: `gpt-5.6-cyber`, `gpt-image-2`, `gpt-realtime-2.1`, `gpt-realtime-2.1-mini`, `gpt-4o-mini-tts`, `gpt-transcribe`, `gpt-live-transcribe`, `gpt-4o-transcribe`, `gpt-4o-mini-transcribe`
+- Embeddings: `text-embedding-3-small`, `text-embedding-3-large`
 
 ```bash
 curl https://api.openai.com/v1/chat/completions -H "Authorization: Bearer $OPENAI_KEY" \
-  -d '{"model":"gpt-5.6-luna","messages":[{"role":"user","content":"Hi"}]}'
+  -d '{"model":"gpt-6-luna","messages":[{"role":"user","content":"Hi"}]}'
 ```
 
 ## Azure OpenAI / Microsoft Foundry
 
 Base URL: `https://<resource>.openai.azure.com/openai/v1` (deployment-based, `api-version` required). Auth: `api-key` header.
 
-- `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-chat-latest`, `gpt-5.5`, `gpt-5.4`, `gpt-5.4-mini`, `gpt-5.4-nano`, `gpt-5.4-pro`, `gpt-5.3-chat`, `gpt-5.3-codex`, `gpt-5.2`, `gpt-5.2-codex`, `gpt-5.1`, `gpt-5.1-chat`, `gpt-5.1-codex`, `gpt-5.1-codex-mini`, `gpt-5`, `gpt-5-mini`, `gpt-5-nano`, `sora-2`, `gpt-4.1`, `gpt-4.1-mini`, `gpt-4.1-nano`, `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`, `codex-mini`, `computer-use-preview`
+- Recent OpenAI generations are available as deployments, and Azure documents models through the GPT-5.6 family. Confirm which deployments and versions your subscription offers before pinning, since Foundry roll-outs lag the first-party API: `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-5.6`, `gpt-chat-latest`, `gpt-5.5`, `gpt-5.4`, `gpt-5.4-mini`, `gpt-5.4-nano`, `gpt-5.4-pro`, `gpt-5.3-chat`, `gpt-5.3-codex`, `gpt-5.2`, `gpt-5.2-chat`, `gpt-5.2-codex`, `gpt-5.1`, `gpt-5.1-chat`, `gpt-5.1-codex`, `gpt-5.1-codex-max`, `gpt-5.1-codex-mini`, `gpt-5`, `gpt-5-mini`, `gpt-5-nano`, `gpt-5-chat`, `gpt-5-codex`, `sora-2`, `gpt-4.1`, `gpt-4.1-mini`, `gpt-4.1-nano`, `gpt-4o`, `gpt-4o-mini`, `gpt-4o-transcribe`, `gpt-4o-mini-transcribe`, `gpt-4o-mini-tts`, `gpt-4-turbo`, `codex-mini`, `computer-use-preview`
 - Partner models sold by Azure: Grok (`grok-4.6`, `grok-4.3`, `grok-4-20-reasoning`, `grok-4-20-non-reasoning`, `grok-4.1-fast-reasoning`, `grok-4.1-fast-non-reasoning`, `grok-4`, `grok-code-fast-1`), Mistral (`Mistral-Large-3`, `mistral-medium-3-5`, `mistral-document-ai-2512`, `mistral-ocr-4-0`), Moonshot (`Kimi-K2.7-Code`, `Kimi-K2.6`, `Kimi-K2.5`), `MAI-Image-2.5`
 
 ## Claude (Anthropic)
 
 Native base URL: `https://api.anthropic.com` (Anthropic `/v1/messages` format; auth `x-api-key`). Reachable from OpenAI-compatible clients via the AI-FW facade.
 
-- Current families: `claude-fable-5-1`, `claude-opus-5.5`, `claude-sonnet-5`, `claude-haiku-4-5`
-- Use dated model IDs when reproducibility matters. The Anthropic Models API is the authoritative source for the exact dated IDs and capabilities.
-- Bedrock IDs use the `anthropic.claude-*` prefix and differ from the native Anthropic IDs. Verify the enabled model list in the target AWS Region.
+- Current lineup, all 1M context with 128K max output:
+  - `claude-fable-5-1` (Claude Fable 5.1): most capable class, for demanding reasoning and long-horizon agentic work
+  - `claude-opus-5-5` (Claude Opus 5.5): Anthropic's recommended starting point for most workloads
+  - `claude-sonnet-5-5` (Claude Sonnet 5.5): fast, cost-effective tier
+  - `claude-haiku-5-5` (Claude Haiku 5.5): lowest-cost, highest-throughput tier
+- Legacy (still available): `claude-opus-5`, `claude-sonnet-5`, `claude-fable-5`, `claude-opus-4-8`, `claude-opus-4-7`, `claude-opus-4-6`, `claude-opus-4-5`, `claude-sonnet-4-6`, `claude-sonnet-4-5`, `claude-haiku-4-5` (dated `claude-haiku-4-5-20251001`)
+- A family ID tracks the latest snapshot; a dated ID pins one. Use dated IDs when reproducibility matters, and treat the Anthropic Models API as the authoritative source for exact IDs and capabilities.
+- On Bedrock the IDs carry the `anthropic.` prefix and differ from the native Anthropic IDs. Verify the enabled model list in the target AWS Region.
 
 ## X (Grok)
 
 Base URL: `https://api.x.ai/v1`
 
-- `grok-4.6`, `grok-4.5`, `grok-4.3`, `grok-4.20-0309-reasoning`, `grok-4.20-0309-non-reasoning`, `grok-4.20-multi-agent-0309`, `grok-build-0.1`
-- Media: `grok-imagine-image-2.0`, `grok-imagine-image`, `grok-imagine-image-quality`, `grok-imagine-video-1.5`, `grok-imagine-video`, `grok-voice-think-fast-2.0`
-- Aliases: `<model>` and `<model>-latest` track the newest release.
+- `grok-4.7`, `grok-4.6`, `grok-4.5`, `grok-4.3`, `grok-4.20`, `grok-4.20-0309-reasoning`, `grok-4.20-0309-non-reasoning`, `grok-4.20-multi-agent-0309`, `grok-build-0.1`
+- Media: `grok-imagine-image-2.0`, `grok-imagine-image`, `grok-imagine-image-pro`, `grok-imagine-image-quality`, `grok-imagine-video-1.5`, `grok-imagine-video`, `grok-voice-think-fast-2.0`, `grok-voice-transcribe-2.0`
+- Aliases: `<model>` and `<model>-latest` track the newest release. Live list: `GET https://api.x.ai/v1/models`.
 
 ## Meta (Llama)
 
@@ -81,8 +93,11 @@ Base URL (OpenAI format): `https://api.deepseek.com` (also `/anthropic` for Anth
 
 Base URL: `https://api.mistral.ai/v1`
 
-- Representative current families: `mistral-medium-latest`, `mistral-large-latest`, `mistral-small-latest`, `ministral-3-14b`, `ministral-3-8b`, `codestral-latest`, `mistral-embed`, `codestral-embed`, `voxtral-mini-transcribe`, `voxtral-small`, `mistral-ocr-latest`, `mistral-moderation-latest`
-- Dated IDs and product availability vary by API tier. Verify the current model catalog before pinning a dated release.
+- Representative current families: `mistral-large-4-0`, `mistral-large-3-25-12`, `mistral-medium-3-5-26-04`, `mistral-medium-3-1-25-08`, `mistral-small-4-0-26-03`, `mistral-small-creative-25-12`, `magistral-medium-1-2-25-09`, `magistral-small-1-2-25-09`, `devstral-small-2-25-12`, `ministral-3-14b-25-12`, `ministral-3-8b-25-12`, `ministral-3-3b-25-12`
+- Code and embeddings: `codestral-25-08`, `codestral-embed-25-05`, `mistral-embed-23-12`
+- Audio, OCR and safety: `voxtral-mini-transcribe-26-02`, `voxtral-small-25-07`, `voxtral-tts-26-03`, `mistral-ocr-4-0`, `mistral-moderation-26-03`, `shieldstral-1-0`
+- Also hosts third-party models, including Z.ai GLM: `zai-glm-5-2`, `zai-glm-5-3`
+- Mistral publishes versioned IDs rather than `-latest` aliases, so pin a dated ID and confirm it in the current catalog before deploying.
 
 ## Google Gemini
 
@@ -119,13 +134,13 @@ OpenAI-compatible base URL: `https://open.bigmodel.cn/api/paas/v4` (Z.ai API)
 - Text: `glm-5.3`, `glm-5.3-flash`, `glm-5.2`, `glm-5.1`, `glm-5`, `glm-4.7`, `glm-4.7-flash`, `glm-4.7-flashx`, `glm-4.6`, `glm-4.5`, `glm-4.5-x`, `glm-4.5-air`, `glm-4.5-airx`, `glm-4.5-flash`, `glm-4-32b-0414-128k`
 - Vision: `glm-4.6v`, `glm-4.6v-flash`, `glm-4.6v-flashx`, `glm-4.5v`, `autoglm-phone-multilingual`
 - OCR/audio: `glm-ocr`, `glm-asr-2512`; media: `glm-image`, `cogview-4`, `cogvideox-3`
-- Also on Bedrock (`zai.glm-*`) and Mistral (`zai-glm-5-2`)
+- Also on Bedrock (`zai.glm-*`) and served by Mistral (`zai-glm-5-2`, `zai-glm-5-3`)
 
 ## Other OpenAI-compatible hosts (verify IDs)
 
 | Vendor | Base URL | Representative models |
 |---|---|---|
-| OpenRouter | `https://openrouter.ai/api/v1` | 300+ models: `openai/gpt-5.6-luna`, `anthropic/claude-sonnet-5`, `google/gemini-3.7-flash`, `meta-llama/llama-3.3-70b-instruct`, `x-ai/grok-4.6`, `deepseek/deepseek-v4-pro`, `qwen/qwen3-*` |
+| OpenRouter | `https://openrouter.ai/api/v1` | 450+ models: `openai/gpt-6-astra`, `openai/gpt-6-luna`, `anthropic/claude-opus-5.5`, `google/gemini-3.8-flash`, `x-ai/grok-4.7`, `meta-llama/llama-3.3-70b-instruct`, `deepseek/deepseek-v4-pro`, `qwen/qwen3-*`. Live list: `GET https://openrouter.ai/api/v1/models` |
 | Together AI | `https://api.together.xyz/v1` | `meta-llama/Llama-3.3-70B-Instruct-Turbo`, `Qwen/Qwen2.5-72B-Instruct`, `deepseek-ai/DeepSeek-V3` |
 | Fireworks AI | `https://api.fireworks.ai/inference/v1` | `accounts/fireworks/models/llama-v3p3-70b-instruct`, `qwen2p5-72b-instruct`, `deepseek-v3` |
 | DeepInfra | `https://api.deepinfra.com/v1/openai` | `meta-llama/Llama-3.3-70B-Instruct`, `Qwen/Qwen2.5-72B-Instruct`, `deepseek-ai/DeepSeek-V3` |
