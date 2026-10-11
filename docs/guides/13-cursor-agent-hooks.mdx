@@ -1,0 +1,119 @@
+---
+title: "Cursor Agent Hooks with AI-FW"
+description: "Inspect Cursor prompts, shell commands, file access, MCP calls, and agent effects with the AI-FW policy gateway."
+order: 13
+---
+
+Cursor Agent Hooks let AI-FW inspect and govern activity on a developer workstation. The integration uses a small local shim that receives Cursor hook payloads over standard input, sends them to AI-FW, and returns the event-specific decision.
+
+Model routing and hooks cover different parts of the workflow:
+
+| Mechanism | Covers |
+|---|---|
+| **Model routing** | Prompts, responses, streaming, tool calls, and model traffic sent through the OpenAI-compatible gateway. |
+| **Cursor Agent Hooks** | Shell commands, file reads and writes, MCP calls, subagent starts, prompts, tab events, and the effects produced on the workstation. |
+
+Use both when you need coverage of model traffic and developer-machine activity.
+
+## What hooks can inspect
+
+| Cursor event | AI-FW behavior | Can block? |
+|---|---|---|
+| `beforeSubmitPrompt` | Applies prompt rules, PII handling, and semantic analysis. | Yes |
+| `preToolUse` | Evaluates the tool against its allow-list and scans the input. | Yes |
+| `beforeShellExecution` | Scans the command and applies the tool decision before execution. | Yes |
+| `beforeMCPExecution` | Governs the MCP `server/tool` identity and payload. | Yes |
+| `beforeReadFile` | Scans the path and content before it reaches the model. | Yes |
+| `subagentStart` | Treats the subagent type as a declared capability. | Yes |
+| `afterFileEdit` | Records the file effect and scans the written content. | No, notification |
+| `afterShellExecution` | Records command outcome metadata and output digests. | No |
+| `afterAgentResponse` | Scans the assistant response. | No |
+| `sessionStart` / `sessionEnd` | Records the session lifecycle and duration. | No |
+| `beforeTabFileRead` / `afterTabFileEdit` | Governs reads and records autonomous tab edits. | Reads only |
+
+Capture is observe-first. Turning on capture records activity but does not deny it. Enforcement becomes active only after an operator configures the relevant allow-list and selects blocking behavior.
+
+## Configure the integration
+
+Open **AI Firewall -> Agent Config -> Integrations -> Cursor Agent Hooks**.
+
+| Setting | Default | Meaning |
+|---|---|---|
+| **Enable Cursor Hooks** | Off | Enables the `POST /hooks/cursor` endpoint. When off, the endpoint returns `404`. |
+| **Credential** | AI-FW API key | The preferred credential for attribution and revocation. Signature-based authentication is also available. |
+| **Mask Rules** | Allow | Allows a mask match to pass and be logged. Set to **Deny** when the hook must refuse masked content. |
+| **Ask Permission** | On | Allows shell and MCP decisions to request human confirmation. Off makes those decisions allow-or-deny. |
+| **Decide Within** | `5000 ms` | Maximum time for AI-FW to decide. Exceeding the budget refuses the request rather than waiting indefinitely. |
+| **Repeat Window** | `2000 ms` | Repeated delivery of the same command updates the existing row inside this window. `0` records every delivery. |
+| **Events** | All | Select which Cursor events the shim sends to AI-FW. |
+| **Deny Message** | Built in | The message returned to the developer when an event is refused. |
+
+Changes to Cursor Hook settings are recorded in the audit trail.
+
+## Install the workstation shim
+
+The hook shim is a local process. It should be distributed through the enterprise workstation process for managed deployments, or configured at project scope for development.
+
+1. Place the `securetron-aifw` shim in a stable location.
+2. Create `hooks.json` from the supplied template.
+3. Configure the hook command with an absolute path in enterprise or user scope.
+4. Set the AI-FW endpoint and credential for the workstation.
+5. Start with capture and observe-first enforcement, then review the activity before enabling blocking.
+
+An API key is preferred because AI-FW can attribute decisions to a key, agent label, and owner. Signature authentication is available when a shared credential is operationally preferable, but it does not provide the same per-developer identity scope.
+
+For a safe first run, use the shim's capture mode to inspect the payloads Cursor sends before connecting it to the gateway. Remove capture mode when you are ready to enforce the configured policy.
+
+## IDE Artifacts
+
+When **IDE Artifacts** is enabled in **AI Firewall -> Agent Config -> Integrations**, AI-FW records effects produced by agent activity:
+
+- File writes and deletions
+- Files read into model context
+- Command output metadata
+- Agent responses
+
+Artifact recording is off by default. The **Artifacts** page is available from the AI Firewall navigation when the feature is enabled.
+
+| Artifact option | Default | Meaning |
+|---|---|---|
+| **Record Artifacts** | Off | Enables recording of agent effects on the developer machine. |
+| **Kinds** | All when no boxes are selected | Select file writes, deletions, reads, commands, or responses. Reads can create the most rows. |
+| **Content** | Digest only | Stores path, digest, size, decision, and scan verdict. **Also store content (capped)** is an explicit opt-in. |
+| Raw retention | 30 days | Raw artifact rows are retention-bounded. Daily counters preserve trend information longer. |
+
+Command output is never stored as content. Content can also be suppressed by a no-log rule or sensitive-data policy. Artifact exports contain metadata and digests, not raw content.
+
+## Read the results
+
+Use these application pages to investigate a Cursor session:
+
+| Question | Where to look |
+|---|---|
+| What did the session do? | **Audit Logs -> Activity**, filtered by conversation. |
+| Which files, commands, and effects were recorded? | **Artifacts**, filtered by kind, source, agent, session, or path. |
+| Which tools did the agent call? | **Skills & Tools**, filtered by source or review state. |
+| When did the session start and end? | **Audit Logs -> Events**, source `cursor`. |
+| Which controls have supporting telemetry? | **Compliance**, where applicable controls cite observed sources. |
+
+The conversation ID connects prompts, tool calls, and artifacts into one trace. A tool call that was declared but never invoked is not counted as usage.
+
+## Failure and privacy posture
+
+The hook endpoint requires a credential. If the gateway cannot be reached, use the per-event failure posture in `hooks.json` and the shim's corresponding fail-open or fail-closed option. Permission events should use fail-closed behavior when an outage must not permit a command.
+
+Arguments and content are digest-first. Store content only when the operational need is clear and the retention and no-log policies have been reviewed. Hooks are workstation-side controls, so enterprise distribution and workspace trust remain part of the security boundary.
+
+## Related documentation
+
+- [Skills & Tools governance](https://aifw.io/docs/admin/14-skills-tools)
+- [IDE Artifacts reference](https://aifw.io/docs/admin/15-ide-artifacts)
+- [Audit logs & export](https://aifw.io/docs/guides/audit-logs-export)
+- [Prompt and response guardrails](https://aifw.io/docs/guides/prompt-response-guardrails)
+- [Claude Code, Cursor & MCP tutorial](https://aifw.io/docs/tutorials/claude-code-cursor-mcp)
+
+## Where to go next
+
+- [Skills & Tools governance](https://aifw.io/docs/admin/14-skills-tools)
+- [IDE Artifacts reference](https://aifw.io/docs/admin/15-ide-artifacts)
+- [Model routing and registry](https://aifw.io/docs/guides/model-routing)

@@ -158,11 +158,11 @@ flowchart TD
 | Section | Topics | Files |
 |---|---|---|
 | Getting Started | What AI-FW is, quick start | `docs/getting-started/` |
-| Guides | Guardrails, routing, semantic analysis, identity, risk, reliability, compression, hooks, observability, audit, API keys | `docs/guides/` |
+| Guides | Guardrails, routing, semantic analysis, identity, risk, reliability, compression, hooks, observability, audit, API keys, Chain of Command, Cursor Agent Hooks | `docs/guides/` |
 | Tutorials | OpenAI SDK, Claude Code & MCP, M365 Copilot admin, agent self-enrollment | `docs/tutorials/` |
 | How-To | Models & keys, AI-assisted rules, Azure deployment | `docs/how-to/` |
 | API Reference | OpenAI-compatible, Anthropic Messages, A2A agent protocol | `docs/api-reference/` |
-| Admin Reference | Settings, Model Inventory, Rules Manager, Risk Profiles, Audit, M365, Users, Agents, CA, Agent Trust | `docs/admin/` |
+| Admin Reference | Settings, Model Inventory, Rules Manager, Risk Profiles, Audit, M365, Users, Agents, CA, Agent Trust, Compliance, Skills & Tools, IDE Artifacts, Backup & Restore | `docs/admin/` |
 | Community Edition | [License & monthly token allowance](https://aifw.io/docs/community-edition/license) | `docs/community-edition/` |
 
 ## 🧩 Enterprise

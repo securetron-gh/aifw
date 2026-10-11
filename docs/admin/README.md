@@ -15,5 +15,8 @@ Every admin page and its options. [Index](../README.md) · [Prev: API Reference]
 11. [CA integrations reference](11-ca-integrations.mdx) - SCEP, ACME, trust store
 12. [Agent Trust reference](12-agent-trust.mdx) - inventory, approvals, tasks
 13. [Compliance module administration](13-compliance-module.mdx) - framework scope, assessments, gaps, attestations, and evidence
+14. [Skills and Tools governance](14-skills-tools.mdx) - tool observation, allow-lists, and custom skills
+15. [IDE Artifacts reference](15-ide-artifacts.mdx) - agent effects, sessions, digests, and retention
+16. [Configuration backup and restore](16-backup-restore.mdx) - immutable revisions, restore, and scheduled retention
 
 Rendered: https://aifw.io/docs/admin/settings

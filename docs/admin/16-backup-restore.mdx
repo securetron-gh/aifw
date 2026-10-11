@@ -1,0 +1,61 @@
+---
+title: "Configuration backup and restore"
+description: "Create immutable configuration revisions, restore safely, and schedule retention-aware backups in AIFW."
+order: 16
+---
+
+AIFW can create immutable configuration revisions before a rule or settings change. Backups cover configuration only. Logs, history, tasks, and credentials are never included, and secrets are represented by placeholders rather than stored values.
+
+## Open Backup & Restore
+
+Open **AI Firewall -> Agent Config -> Backup & Restore**.
+
+## Take a backup
+
+Use **Take a backup** to create a revision before a change.
+
+| Field | Meaning |
+|---|---|
+| **Note** | Optional explanation, such as the change the revision protects. |
+| **Keep newest** | Optional trimming limit. `0` keeps all revisions created by this action. |
+| **Back up now** | Creates the immutable configuration revision. |
+
+Each revision records when it was created, who or what created it, the application version, and its integrity status.
+
+## Automatic backups
+
+Use **Automatic backups** to schedule revisions:
+
+| Setting | Default | Allowed range |
+|---|---:|---|
+| **Enabled** | Off | Turn scheduled backups on or off. |
+| **Every (minutes)** | Deployment setting | `5` to `10080` minutes. |
+| **Keep newest** | Deployment setting | `1` to `200` revisions. |
+
+Automatic revisions are attributed to the scheduler. Older revisions are trimmed after the retention limit is applied.
+
+## Restore a revision
+
+Review the revision list before restoring. Verify the integrity status and note the revision you intend to use. Restore is a configuration operation, so review the resulting settings and rules after the application reloads them.
+
+Do not treat a configuration backup as a disaster-recovery database backup. Preserve PostgreSQL data and deployment assets using your normal infrastructure process.
+
+## Security boundary
+
+- Credentials and secret values are not included.
+- Transaction logs, audit history, tasks, and other runtime history are not included.
+- Revisions are immutable and integrity-checked.
+- Backup and restore activity should be reviewed in the audit trail.
+
+## Related documentation
+
+- [Settings reference](https://aifw.io/docs/admin/settings)
+- [Prompt and response guardrails](https://aifw.io/docs/guides/prompt-response-guardrails)
+- [Audit logs & export](https://aifw.io/docs/guides/audit-logs-export)
+- [Compliance module administration](https://aifw.io/docs/admin/compliance-module)
+
+## Where to go next
+
+- [Settings reference](https://aifw.io/docs/admin/settings)
+- [Rules Manager reference](https://aifw.io/docs/admin/rules-manager)
+- [Audit logs and SIEM export](https://aifw.io/docs/guides/audit-logs-export)

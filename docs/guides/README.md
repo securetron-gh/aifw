@@ -13,5 +13,7 @@ Deep dives into each capability. [Index](../README.md) · [Prev: Getting Started
 9. [Observability & dashboard](09-observability-dashboard.mdx) - stats, charts, live activity
 10. [Audit logs & export](10-audit-logs-export.mdx) - logging policy, events, SIEM export
 11. [Admin-issued API keys](11-agent-api-keys.mdx) - hashed keys, revocation, identity
+12. [Chain of Command](12-chain-of-command.mdx) - consent-based swarms, delegation, vouchers
+13. [Cursor Agent Hooks](13-cursor-agent-hooks.mdx) - govern Cursor prompts, tools, commands, and effects
 
 Rendered: https://aifw.io/docs/guides/prompt-response-guardrails

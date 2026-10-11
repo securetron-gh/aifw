@@ -7,6 +7,12 @@ order: 1
 The Settings page organizes every runtime configuration option into tabs. All
 settings are database-backed, apply instantly, and survive restarts.
 
+The current tabs also include **Backup & Restore** and **Tool governance**. The
+**Integrations** tab includes **IDE Artifacts** and Cursor Agent Hooks settings.
+See the [Skills and Tools governance reference](/docs/admin/skills-tools), the
+[IDE Artifacts reference](/docs/admin/ide-artifacts), and the [Cursor Agent Hooks
+guide](/docs/guides/cursor-agent-hooks) for the operational workflows.
+
 ## General
 
 Gateway-wide basics, including the product version shown in the UI.
@@ -59,8 +65,22 @@ APP-NAME).
 
 ## Integrations
 
-M365 Copilot admin bridge (app-only credentials and test connection) and the
-endpoint gateway (images, audio, files, fine-tuning, batches).
+M365 Copilot admin bridge (app-only credentials and test connection), the
+endpoint gateway (images, audio, files, fine-tuning, batches), Cursor Agent
+Hooks, and IDE Artifacts. See the [Cursor Agent Hooks guide](/docs/guides/cursor-agent-hooks)
+and [IDE Artifacts reference](/docs/admin/ide-artifacts).
+
+## Backup & Restore
+
+Configuration-only immutable revisions, restore, automatic backup intervals,
+retention, and integrity status. See the [Configuration backup and restore
+reference](/docs/admin/backup-restore).
+
+## Tool governance
+
+Tool capture and observe-first or blocking enforcement for MCP calls and
+relayed model tools. See the [Skills and Tools governance
+reference](/docs/admin/skills-tools).
 
 ## Compliance
 

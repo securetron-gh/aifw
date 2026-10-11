@@ -1,0 +1,76 @@
+---
+title: "Skills and Tools governance"
+description: "Observe agent tool use, review declared skills, and enforce allow-list decisions for MCP and relayed model tools."
+order: 14
+---
+
+The **Skills & Tools** page shows what agents are equipped with and what they have actually used. It separates declarations from invocations so an offered tool is not mistaken for a tool that ran.
+
+## Enable observation
+
+Open **AI Firewall -> Agent Config -> Tool governance**.
+
+| Setting | Default | Meaning |
+|---|---|---|
+| **Capture tool use** (`ai_fw_tool_governance_enabled`) | Off | Records tool calls from the gateway MCP surface and relayed model traffic. |
+| **Tool enforcement** | Observe only | Records decisions without blocking. **Block calls outside the allow-list** enables enforcement. |
+
+Capture is off by default. Turning it on is observe-only until blocking is selected. With no allow-list configured, an agent remains unrestricted rather than being denied by an empty policy.
+
+## Review the Skills & Tools page
+
+Open **Skills & Tools** from the AI Firewall navigation. The page reports:
+
+- Tools seen
+- Invocations
+- Declarations
+- Unreviewed tools
+- Top tools by invocation count
+- Top skills by the number of agents using them
+- Daily tool-call activity
+
+Filter the inventory by **Source** (`MCP` or **Relayed model traffic`) and **Review state** (`Unreviewed only`). Review a tool's name, source, invocation count, declaration count, first and last use, and review state.
+
+Declarations are offers made to a model. Invocations are calls an agent actually made. The distinction is important when investigating exposure and usage.
+
+## Define custom skills
+
+The Skill catalog is on the **Skills & Tools** page. Use **Save skill** to define a skill with:
+
+| Field | Meaning |
+|---|---|
+| **Id** | Stable identifier named by a swarm grant. An existing ID updates that skill. |
+| **Name** | Display name. |
+| **Target mode** | The delivery target. The current UI offers `webhook`. |
+| **Validation** | Curated skills use a JSON Schema subset. **Free form** explicitly permits arbitrary JSON without schema validation. |
+| **Description** | Operator-facing description. |
+| **Payload schema** | Optional supported JSON Schema subset, validated when the skill is saved. |
+
+Use **Retire** to soft-delete a skill. The catalog keeps the row so older audit records and grants remain understandable, while retired skills no longer work for new orders.
+
+Custom skills are authorized, validated, audited, and relayed to the target agent. AI-FW does not execute arbitrary custom skill code itself.
+
+## Allow-list behavior
+
+Tool decisions use the configured agent, policy, and swarm allow-list levels. The most specific applicable list wins. Tool names can represent:
+
+- `Shell`
+- `Read`
+- A Cursor tool name
+- An MCP `server/tool` identity
+- `subagent:<type>`
+
+Use observe-only mode to learn the real tool inventory before enabling blocking. Tool arguments are represented by metadata and digests rather than being stored as an unrestricted second content store.
+
+## Related documentation
+
+- [Cursor Agent Hooks](https://aifw.io/docs/guides/cursor-agent-hooks)
+- [IDE Artifacts reference](https://aifw.io/docs/admin/ide-artifacts)
+- [MCP tools and governance](https://aifw.io/docs/solutions/govern-mcp-tool-calls)
+- [Chain of Command](https://aifw.io/docs/guides/chain-of-command)
+
+## Where to go next
+
+- [Cursor Agent Hooks](https://aifw.io/docs/guides/cursor-agent-hooks)
+- [IDE Artifacts reference](https://aifw.io/docs/admin/ide-artifacts)
+- [Audit logs & export](https://aifw.io/docs/guides/audit-logs-export)

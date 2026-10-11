@@ -1,0 +1,67 @@
+---
+title: "IDE Artifacts reference"
+description: "Configure digest-first records of files, commands, reads, and agent responses produced on developer machines."
+order: 15
+---
+
+The **Artifacts** page records effects produced by agent activity on developer machines. It is designed to show what an agent wrote, read, and ran, without turning the gateway into an unrestricted content store.
+
+## Enable artifact recording
+
+Open **AI Firewall -> Agent Config -> Integrations -> IDE Artifacts**.
+
+| Setting | Default | Meaning |
+|---|---|---|
+| **Record Artifacts** (`aifw_artifacts_enabled`) | Off | Enables artifact rows for agent effects. |
+| **Kinds** (`aifw_artifacts_kinds`) | All when no boxes are selected | Select file writes, deletions, reads, commands, or responses. |
+| **Content** (`aifw_artifacts_content`) | `digest` | Stores metadata and a digest only. `store` also retains capped content where policy permits. |
+| Content cap | 4096 characters | Stored content is capped. Command output is never stored. |
+| Raw retention | 30 days | Raw artifact rows are purged after the retention window; daily counters preserve trends. |
+
+Recording is off by default. When it is disabled, the Artifacts page explicitly reports that nothing is being written.
+
+## Use the Artifacts page
+
+Open **Artifacts** from the AI Firewall navigation. The page supports filters for:
+
+| Filter | Values or purpose |
+|---|---|
+| **Kind** | `file_write`, `file_delete`, `read`, `command_output`, or `response`. |
+| **Source** | `cursor` or `cursor-tab`. |
+| **Agent** | Agent label or identity. |
+| **Session** | Conversation ID for an end-to-end trace. |
+| **Path** | Path or command text filter. |
+
+Each row includes the time, kind, source, path or command, digest, size, decision, scan verdict, agent, session, and content state. Expand a row for additional detail.
+
+## Sessions and trends
+
+A conversation ID groups the effects of one agent session. The session view shows:
+
+- Effects recorded
+- Tool calls and denials
+- Files touched
+- Span from first to last effect
+- Agents and skills involved
+- Paths associated with the session
+
+Daily counters show counts, flagged items, denied items, and bytes by kind and path area. Raw rows are retained for the configured period while counters preserve the longer trend.
+
+## Privacy and export
+
+Artifacts are digest-first. File paths, SHA-256 digests, sizes, decisions, and scan verdicts remain available even when content storage is disabled. Stored content is subject to the cap, retention, no-log rules, and sensitive-data policy.
+
+Command output is never stored as artifact content because it can contain secrets. Artifact exports and syslog records contain metadata and digests, not raw content.
+
+## Related documentation
+
+- [Cursor Agent Hooks](https://aifw.io/docs/guides/cursor-agent-hooks)
+- [Skills & Tools governance](https://aifw.io/docs/admin/skills-tools)
+- [Audit logs & export](https://aifw.io/docs/guides/audit-logs-export)
+- [Compliance module administration](https://aifw.io/docs/admin/compliance-module)
+
+## Where to go next
+
+- [Cursor Agent Hooks](https://aifw.io/docs/guides/cursor-agent-hooks)
+- [Skills & Tools governance](https://aifw.io/docs/admin/skills-tools)
+- [Audit logs and SIEM export](https://aifw.io/docs/guides/audit-logs-export)
