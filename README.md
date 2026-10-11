@@ -32,7 +32,7 @@ AI-FW is the **AI firewall and governance gateway** between your AI agents and t
 
 ## 🛡️ Features
 
-Every feature is documented on [aifw.io/docs](https://aifw.io/docs) and in this repository's `docs/` folder.
+Every feature is documented on [aifw.io/docs](https://aifw.io/docs) and in this repository's `docs/` folder. Product updates and practical guidance are published on [AI-FW Insights](https://aifw.io/insights), with an [RSS feed](https://aifw.io/insights/rss.xml).
 
 Legend: ✅ native · 🧩 via partner or plugin · ❌ not supported
 
@@ -67,7 +67,7 @@ Legend: ✅ native · 🧩 via partner or plugin · ❌ not supported
 | Core & reference | [Prompt Analyzer](docs/admin/03-rules-manager.mdx) | [Read](https://aifw.io/docs/admin/rules-manager) | ✅ |
 | Core & reference | [Admin pages](docs/admin/01-settings.mdx) | [Read](https://aifw.io/docs/admin/settings) | ✅ |
 | Core & reference | [Supported models &amp; endpoints (200+)](docs/api-reference/04-openai-compatible-endpoints.mdx) | [Read](https://aifw.io/docs/api-reference/openai-compatible-endpoints) | ✅ |
-| SDKs | [Chain of Command Python and TypeScript SDKs](sdk/README.md) | [Read](https://github.com/securetron-gh/aifw/tree/main/sdk) | ✅ |
+| Insights | [AI-FW Insights](https://aifw.io/insights) | [Read](https://aifw.io/insights) | ✅ |`r`n| SDKs | [Chain of Command Python and TypeScript SDKs](sdk/README.md) | [Read](https://github.com/securetron-gh/aifw/tree/main/sdk) | ✅ |
 
 ![OpenAI](https://img.shields.io/badge/OpenAI-111?style=flat&logo=openai&logoColor=white) ![Anthropic](https://img.shields.io/badge/Anthropic-111?style=flat&logo=anthropic&logoColor=white) ![Google](https://img.shields.io/badge/Google-111?style=flat&logo=google&logoColor=white) ![Meta](https://img.shields.io/badge/Meta-111?style=flat&logo=meta&logoColor=white) ![xAI](https://img.shields.io/badge/xAI-111?style=flat&logo=xai&logoColor=white) ![DeepSeek](https://img.shields.io/badge/DeepSeek-111?style=flat&logo=deepseek&logoColor=white) ![Mistral](https://img.shields.io/badge/Mistral-111?style=flat&logo=mistral&logoColor=white) ![Groq](https://img.shields.io/badge/Groq-111?style=flat&logo=groq&logoColor=white) ![Azure](https://img.shields.io/badge/Azure-111?style=flat&logo=microsoftazure&logoColor=white) ![AWS](https://img.shields.io/badge/AWS-111?style=flat&logo=amazonaws&logoColor=white) ![Alibaba](https://img.shields.io/badge/Alibaba-111?style=flat&logo=alibabacloud&logoColor=white) ![Ollama](https://img.shields.io/badge/Ollama-111?style=flat&logo=ollama&logoColor=white)
 
