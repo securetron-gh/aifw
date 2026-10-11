@@ -27,7 +27,7 @@ AI-FW is the **AI firewall and governance gateway** between your AI agents and t
 - [x] **Agents are identities**: A2A protocol, agent registry, mTLS, Kerberos, OIDC SSO, SCIM provisioning
 - [x] **Cost savings without safety holes**: semantic-gated prompt compression and inspection-gated caching
 - [x] **Audit you can hand to a regulator**: metadata-only transaction log with encrypted export to your SIEM
-- [x] **Surfaces others cannot reach**: Claude inference hooks, MCP tool governance, M365 Copilot admin with agent sync
+- [x] **Surfaces others cannot reach**: Claude inference hooks, Cursor Agent Hooks, MCP tool governance, M365 Copilot admin with agent sync
 - [x] **Opt-in endpoint gateway**: images, audio, files, fine-tuning, and batches under the same inspection pipeline
 
 ## 🛡️ Features
@@ -53,8 +53,13 @@ Legend: ✅ native · 🧩 via partner or plugin · ❌ not supported
 | Observability & audit | [Risk profiles &amp; auto-block](docs/guides/05-risk-profiles.mdx) | [Read](https://aifw.io/docs/guides/risk-profiles) | ✅ |
 | Observability & audit | [Audit logs &amp; export](docs/guides/10-audit-logs-export.mdx) | [Read](https://aifw.io/docs/guides/audit-logs-export) | ✅ |
 | Governance & compliance | [Compliance module administration](docs/admin/13-compliance-module.mdx) | [Read](https://aifw.io/docs/admin/compliance-module) | ✅ |
+| Governance & compliance | [Skills &amp; Tools governance](docs/admin/14-skills-tools.mdx) | [Read](https://aifw.io/docs/admin/skills-tools) | ✅ |
+| Governance & compliance | [IDE Artifacts](docs/admin/15-ide-artifacts.mdx) | [Read](https://aifw.io/docs/admin/ide-artifacts) | ✅ |
+| Governance & compliance | [Configuration backup and restore](docs/admin/16-backup-restore.mdx) | [Read](https://aifw.io/docs/admin/backup-restore) | ✅ |
 | Integrations | [M365 Copilot admin](docs/tutorials/03-m365-copilot-bridge.mdx) | [Read](https://aifw.io/docs/tutorials/m365-copilot-bridge) | ✅ |
 | Integrations | [Claude Code, Cursor &amp; MCP](docs/tutorials/02-claude-code-cursor-mcp.mdx) | [Read](https://aifw.io/docs/tutorials/claude-code-cursor-mcp) | ✅ |
+| Integrations | [Cursor Agent Hooks and shims](docs/guides/13-cursor-agent-hooks.mdx) | [Read](https://aifw.io/docs/guides/cursor-agent-hooks) | ✅ |
+| Integrations | [securetron-aifw hook package](tools/securetron-aifw/README.md) | [Use the package](tools/securetron-aifw/README.md) | ✅ |
 | Integrations | [Endpoint gateway](docs/api-reference/01-openai-compatible-api.mdx) | [Read](https://aifw.io/docs/api-reference/openai-compatible-api) | ✅ |
 | Core & reference | [Model routing &amp; registry](docs/guides/02-model-routing.mdx) | [Read](https://aifw.io/docs/guides/model-routing) | ✅ |
 | Core & reference | [Reliability](docs/guides/06-reliability-caching.mdx) | [Read](https://aifw.io/docs/guides/reliability-caching) | ✅ |
