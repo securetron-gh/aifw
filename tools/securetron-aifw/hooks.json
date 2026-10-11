@@ -1,0 +1,124 @@
+{
+    "version":  1,
+    "hooks":  {
+                  "beforeSubmitPrompt":  [
+                                             {
+                                                 "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-closed",
+                                                 "timeout":  15,
+                                                 "failClosed":  true
+                                             }
+                                         ],
+                  "preToolUse":  [
+                                     {
+                                         "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-closed",
+                                         "timeout":  15,
+                                         "failClosed":  true
+                                     }
+                                 ],
+                  "beforeShellExecution":  [
+                                               {
+                                                   "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-closed",
+                                                   "timeout":  15,
+                                                   "failClosed":  true
+                                               }
+                                           ],
+                  "beforeMCPExecution":  [
+                                             {
+                                                 "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-closed",
+                                                 "timeout":  15,
+                                                 "failClosed":  true
+                                             }
+                                         ],
+                  "beforeReadFile":  [
+                                         {
+                                             "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-closed",
+                                             "timeout":  15,
+                                             "failClosed":  true
+                                         }
+                                     ],
+                  "afterFileEdit":  [
+                                        {
+                                            "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-open",
+                                            "timeout":  15,
+                                            "failClosed":  false
+                                        }
+                                    ],
+                  "afterTabFileEdit":  [
+                                           {
+                                               "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-open",
+                                               "timeout":  15,
+                                               "failClosed":  false
+                                           }
+                                       ],
+                  "beforeTabFileRead":  [
+                                            {
+                                                "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-closed",
+                                                "timeout":  15,
+                                                "failClosed":  true
+                                            }
+                                        ],
+                  "postToolUse":  [
+                                      {
+                                          "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-open",
+                                          "timeout":  15,
+                                          "failClosed":  false
+                                      }
+                                  ],
+                  "postToolUseFailure":  [
+                                             {
+                                                 "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-open",
+                                                 "timeout":  15,
+                                                 "failClosed":  false
+                                             }
+                                         ],
+                  "afterShellExecution":  [
+                                              {
+                                                  "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-open",
+                                                  "timeout":  15,
+                                                  "failClosed":  false
+                                              }
+                                          ],
+                  "afterAgentResponse":  [
+                                             {
+                                                 "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-open",
+                                                 "timeout":  15,
+                                                 "failClosed":  false
+                                             }
+                                         ],
+                  "subagentStart":  [
+                                        {
+                                            "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-closed",
+                                            "timeout":  15,
+                                            "failClosed":  true
+                                        }
+                                    ],
+                  "sessionStart":  [
+                                       {
+                                           "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-open",
+                                           "timeout":  10,
+                                           "failClosed":  false
+                                       }
+                                   ],
+                  "sessionEnd":  [
+                                     {
+                                         "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-open",
+                                         "timeout":  10,
+                                         "failClosed":  false
+                                     }
+                                 ],
+                  "preCompact":  [
+                                     {
+                                         "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-open",
+                                         "timeout":  10,
+                                         "failClosed":  false
+                                     }
+                                 ],
+                  "stop":  [
+                               {
+                                   "command":  "node ./tools/securetron-aifw/securetron-aifw.mjs --fail-open",
+                                   "timeout":  10,
+                                   "failClosed":  false
+                               }
+                           ]
+              }
+}
